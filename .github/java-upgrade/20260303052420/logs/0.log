@@ -1,0 +1,1186 @@
+2026-03-03T05:24:20.617Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:24:20.618Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "precheckCompleted",
+  "phase": "precheck",
+  "status": "failed",
+  "sessionId": "",
+  "details": {
+    "category": "Unsupported Project",
+    "scenario": "Not git-managed"
+  },
+  "message": "Project is not git-managed. Git repository initialization is required for version control during the upgrade process."
+}}).
+2026-03-03T05:24:20.621Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:24:20.631Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'precheckCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:24:20.632Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:25:01.922Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:25:01.923Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "precheckCompleted",
+  "phase": "precheck",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "",
+  "status": "succeeded"
+}}).
+2026-03-03T05:25:01.924Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:25:01.930Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'precheckCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:25:01.931Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:26:31.419Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:26:31.420Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "planInitialized",
+  "phase": "plan",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:26:31.420Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:26:31.421Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:26:31.421Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:26:31.475Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:26:31.476Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "planInitialized",
+  "phase": "plan",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:26:31.477Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:26:31.477Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'planInitialized' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:26:31.478Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:27:12.009Z [INFO] ---------------------prepare list_jdks----------------------
+2026-03-03T05:27:12.010Z [INFO] [Tool.prepareInvocation]({name: list_jdks, input: {
+  "sessionId": "20260303052420"
+}}).
+2026-03-03T05:27:12.012Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:27:12.012Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "List jdks"
+}}).
+2026-03-03T05:27:12.013Z [INFO] ----------------------prepared list_jdks----------------------
+2026-03-03T05:27:12.061Z [INFO] ----------------------invoke list_jdks----------------------
+2026-03-03T05:27:12.062Z [INFO] [Tool.invoke]({name: list_jdks, input: {
+  "sessionId": "20260303052420"
+}}).
+2026-03-03T05:27:12.062Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:27:12.081Z [INFO] [Tool.invoke]({result: {
+  "message": "We found following jdks in your system:\n\n1. Java 17.0.16\n   📁 Path: C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin\n   🏷️ Source: PATH\n\n2. Java 21.0.9\n   📁 Path: C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin\n   🏷️ Source: Gradle,PATH,JAVA_HOME\n\nTotal: 2 JDK installation(s) found"
+}}).
+2026-03-03T05:27:12.082Z [INFO] ----------------------invoked list_jdks----------------------
+2026-03-03T05:27:12.092Z [INFO] ---------------------prepare list_mavens----------------------
+2026-03-03T05:27:12.093Z [INFO] [Tool.prepareInvocation]({name: list_mavens, input: {
+  "sessionId": "20260303052420",
+  "includeVersion": true
+}}).
+2026-03-03T05:27:12.093Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:27:12.094Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "List mavens"
+}}).
+2026-03-03T05:27:12.095Z [INFO] ----------------------prepared list_mavens----------------------
+2026-03-03T05:27:12.133Z [INFO] ----------------------invoke list_mavens----------------------
+2026-03-03T05:27:12.133Z [INFO] [Tool.invoke]({name: list_mavens, input: {
+  "sessionId": "20260303052420",
+  "includeVersion": true
+}}).
+2026-03-03T05:27:12.134Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:27:12.135Z [INFO] [Tool.invoke]({result: {
+  "message": "No Maven installations found."
+}}).
+2026-03-03T05:27:12.136Z [INFO] ----------------------invoked list_mavens----------------------
+2026-03-03T05:27:40.562Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:27:40.563Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "environmentAnalyzed",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Environment analysis completed: 2 JDKs found (17.0.16, 21.0.9), Maven wrapper present, no system Maven",
+  "details": {
+    "jdkCount": 2,
+    "jdk17Path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "jdk21Path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "mavenWrapperPresent": true,
+    "systemMavenFound": false
+  }
+}}).
+2026-03-03T05:27:40.563Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:27:40.563Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:27:40.564Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:27:40.581Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:27:40.582Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "environmentAnalyzed",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Environment analysis completed: 2 JDKs found (17.0.16, 21.0.9), Maven wrapper present, no system Maven",
+  "details": {
+    "jdkCount": 2,
+    "jdk17Path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "jdk21Path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "mavenWrapperPresent": true,
+    "systemMavenFound": false
+  }
+}}).
+2026-03-03T05:27:40.582Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:27:40.582Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'environmentAnalyzed' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:27:40.583Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:28:44.928Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:28:44.928Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "dependenciesAnalyzed",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Successfully analyzed project dependencies. Current stack: Spring Boot 4.0.3 with Java 17. Target: Java 21. No framework upgrades required - Spring Boot 4.0.3 fully supports Java 21."
+}}).
+2026-03-03T05:28:44.929Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:28:44.929Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:28:44.930Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:28:44.953Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:28:44.953Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "dependenciesAnalyzed",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Successfully analyzed project dependencies. Current stack: Spring Boot 4.0.3 with Java 17. Target: Java 21. No framework upgrades required - Spring Boot 4.0.3 fully supports Java 21."
+}}).
+2026-03-03T05:28:44.953Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:28:44.954Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'dependenciesAnalyzed' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:28:44.954Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:30:04.692Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:30:04.693Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "upgradePathDesigned",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Upgrade path designed: 4 steps (Setup Environment, Setup Baseline, Upgrade to Java 21, Final Validation)"
+}}).
+2026-03-03T05:30:04.694Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:30:04.694Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:30:04.695Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:30:04.727Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:30:04.727Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "event": "upgradePathDesigned",
+  "phase": "plan",
+  "status": "succeeded",
+  "message": "Upgrade path designed: 4 steps (Setup Environment, Setup Baseline, Upgrade to Java 21, Final Validation)"
+}}).
+2026-03-03T05:30:04.728Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:30:04.728Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'upgradePathDesigned' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:30:04.728Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:32:01.180Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:32:01.181Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "event": "planReviewed",
+  "phase": "plan",
+  "status": "succeeded",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "message": "Plan review completed successfully. All sections populated, template compliant, and feasible for execution."
+}}).
+2026-03-03T05:32:01.181Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:32:01.181Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:32:01.181Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:32:01.216Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:32:01.216Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "sessionId": "20260303052420",
+  "event": "planReviewed",
+  "phase": "plan",
+  "status": "succeeded",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "message": "Plan review completed successfully. All sections populated, template compliant, and feasible for execution."
+}}).
+2026-03-03T05:32:01.217Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:32:01.217Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'planReviewed' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:32:01.218Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:32:14.746Z [INFO] ---------------------prepare confirm_upgrade_plan----------------------
+2026-03-03T05:32:14.747Z [INFO] [Tool.prepareInvocation]({name: confirm_upgrade_plan, input: {
+  "sessionId": "20260303052420"
+}}).
+2026-03-03T05:32:14.747Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:32:14.748Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Review [upgrade plan](file:///d:/VS-code save/EAS/demo/.github/java-upgrade/20260303052420/plan.md)",
+  "confirmationMessages": {
+    "title": "Plan generated",
+    "message": "Please review the generated plan and make any necessary adjustments before proceeding. You can modify the generated [`plan.md`](file:///d:/VS-code save/EAS/demo/.github/java-upgrade/20260303052420/plan.md) directly."
+  }
+}}).
+2026-03-03T05:32:14.748Z [INFO] ----------------------prepared confirm_upgrade_plan----------------------
+2026-03-03T05:32:25.319Z [INFO] ----------------------invoke confirm_upgrade_plan----------------------
+2026-03-03T05:32:25.319Z [INFO] [Tool.invoke]({name: confirm_upgrade_plan, input: {
+  "sessionId": "20260303052420"
+}}).
+2026-03-03T05:32:25.320Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:32:25.320Z [INFO] Upgrade plan confirmed successfully.
+2026-03-03T05:32:25.321Z [INFO] [Tool.invoke]({result: {
+  "message": "Generated plan is reviewed and confirmed by the user! the upgrade process will start now and be tracked in markdown file: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420\\progress.md."
+}}).
+2026-03-03T05:32:25.322Z [INFO] ----------------------invoked confirm_upgrade_plan----------------------
+2026-03-03T05:32:34.362Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:32:34.363Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "planConfirmed",
+  "phase": "plan",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:32:34.363Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:32:34.363Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:32:34.364Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:32:34.388Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:32:34.388Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "planConfirmed",
+  "phase": "plan",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:32:34.389Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:32:34.389Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'planConfirmed' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:32:34.390Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:33:30.725Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:33:30.726Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "planExecutionStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:33:30.726Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:33:30.727Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:33:30.727Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:33:30.813Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:33:30.814Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "planExecutionStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:33:30.815Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:33:31.153Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'planExecutionStarted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:33:31.154Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:34:23.750Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:34:23.751Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "details": {
+    "jdkPath": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "buildToolPath": "."
+  },
+  "event": "environmentSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:34:23.751Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:34:23.752Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:34:23.752Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:34:23.792Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:34:23.793Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "details": {
+    "jdkPath": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "buildToolPath": "."
+  },
+  "event": "environmentSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:34:23.793Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:34:23.794Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:34:23.795Z [INFO] Project java version: 17
+2026-03-03T05:34:23.796Z [INFO] Maven project detected.
+2026-03-03T05:34:23.796Z [INFO] Build tool type: mvnw
+2026-03-03T05:34:23.796Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+  "version": "17"
+}
+2026-03-03T05:34:23.797Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:34:23.797Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "name": "java",
+    "version": "17"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:34:42.878Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'environmentSetup' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:34:42.878Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:43:31.711Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:43:31.713Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:43:31.715Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:43:31.716Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:43:31.716Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:43:31.740Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:43:31.741Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:43:31.741Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:43:31.741Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:43:31.742Z [INFO] Project java version: 17
+2026-03-03T05:43:31.743Z [INFO] Maven project detected.
+2026-03-03T05:43:31.743Z [INFO] Build tool type: mvnw
+2026-03-03T05:43:31.752Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+  "version": "17"
+}
+2026-03-03T05:43:31.752Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:43:31.752Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "name": "java",
+    "version": "17"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:43:31.753Z [INFO] [MavenBuildTool] Getting all module coordinates of d:\VS-code save\EAS\demo
+2026-03-03T05:43:31.753Z [INFO] [MavenBuildTool] Getting effective POMs of d:\VS-code save\EAS\demo
+2026-03-03T05:43:31.753Z [INFO] [Environment] Running command (Java undefined): mvnw help:effective-pom -Doutput=effective-pom-f5ce17cf-37a9-42f9-bb10-22698ad885ae.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.5.1:effective-pom (default-cli) @ demo ---
+[INFO] Effective-POM written to: d:\VS-code save\EAS\demo\effective-pom-f5ce17cf-37a9-42f9-bb10-22698ad885ae.log
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.608 s
+[INFO] Finished at: 2026-03-03T12:43:39+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:43:39.211Z [INFO] [BaseBuildTool] Found 1 modules: .
+2026-03-03T05:43:39.218Z [INFO] [BaseBuildTool] Finish counting Java and class files
+2026-03-03T05:43:39.219Z [INFO] [MavenBuildTool] Cleaning d:\VS-code save\EAS\demo using Maven
+2026-03-03T05:43:39.219Z [INFO] [Environment] Running command (Java undefined): mvnw clean -q -B -fn
+2026-03-03T05:43:46.273Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'buildCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:43:46.274Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:45:22.170Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:45:22.171Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.171Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:45:22.172Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:45:22.172Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:45:22.213Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:45:22.214Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.214Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:45:22.215Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:45:22.215Z [INFO] Project java version: 17
+2026-03-03T05:45:22.216Z [INFO] Maven project detected.
+2026-03-03T05:45:22.216Z [INFO] Build tool type: mvnw
+2026-03-03T05:45:22.224Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+  "version": "17"
+}
+2026-03-03T05:45:22.224Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:45:22.224Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "name": "java",
+    "version": "17"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:45:22.225Z [INFO] [BaseBuildTool] Gathering test results...
+2026-03-03T05:45:22.230Z [INFO] [BaseBuildTool] Summarizing surefire reports.
+2026-03-03T05:45:22.230Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'testCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:45:22.231Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:45:22.345Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:45:22.346Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "baselineSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.346Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:45:22.347Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:45:22.348Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:45:22.429Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:45:22.430Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "baselineSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.447Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:45:22.449Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'baselineSetup' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:45:22.449Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:45:42.202Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:45:42.203Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "details": {
+    "stepNumber": 3,
+    "stepTitle": "Upgrade to Java 21"
+  },
+  "event": "upgradeStepStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:42.203Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:45:42.204Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:45:42.204Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:45:42.251Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:45:42.252Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "details": {
+    "stepNumber": 3,
+    "stepTitle": "Upgrade to Java 21"
+  },
+  "event": "upgradeStepStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:42.252Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:45:42.253Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'upgradeStepStarted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:45:42.253Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:46:48.154Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:46:48.155Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:46:48.156Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:46:48.157Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:46:48.157Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:46:48.209Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:46:48.210Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:46:48.210Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:46:48.211Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:46:48.212Z [INFO] Project java version: 21
+2026-03-03T05:46:48.213Z [INFO] Maven project detected.
+2026-03-03T05:46:48.213Z [INFO] Build tool type: mvnw
+2026-03-03T05:46:48.224Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+  "version": "21"
+}
+2026-03-03T05:46:48.224Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:46:48.225Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "name": "java",
+    "version": "21"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:46:48.225Z [INFO] [MavenBuildTool] Getting all module coordinates of d:\VS-code save\EAS\demo
+2026-03-03T05:46:48.225Z [INFO] [MavenBuildTool] Getting effective POMs of d:\VS-code save\EAS\demo
+2026-03-03T05:46:48.226Z [INFO] [Environment] Running command (Java undefined): mvnw help:effective-pom -Doutput=effective-pom-d1ab7ba1-9f1a-4679-a9c7-ffc8e419f31a.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.5.1:effective-pom (default-cli) @ demo ---
+[INFO] Effective-POM written to: d:\VS-code save\EAS\demo\effective-pom-d1ab7ba1-9f1a-4679-a9c7-ffc8e419f31a.log
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.600 s
+[INFO] Finished at: 2026-03-03T12:46:55+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:46:55.783Z [INFO] [BaseBuildTool] Found 1 modules: .
+2026-03-03T05:46:55.799Z [INFO] [BaseBuildTool] Finish counting Java and class files
+2026-03-03T05:46:55.800Z [INFO] [MavenBuildTool] Cleaning d:\VS-code save\EAS\demo using Maven
+2026-03-03T05:46:55.800Z [INFO] [Environment] Running command (Java undefined): mvnw clean -q -B -fn
+2026-03-03T05:47:02.989Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'buildCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:47:02.990Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:47:16.146Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:47:16.147Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "details": {
+    "commitId": "fbe688b0eab599476054f63dd649221745071044",
+    "stepNumber": 3,
+    "stepTitle": "Upgrade to Java 21"
+  },
+  "event": "upgradeStepCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:47:16.147Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:47:16.148Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:47:16.148Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:47:16.177Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:47:16.177Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "details": {
+    "commitId": "fbe688b0eab599476054f63dd649221745071044",
+    "stepNumber": 3,
+    "stepTitle": "Upgrade to Java 21"
+  },
+  "event": "upgradeStepCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:47:16.178Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:47:16.460Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'upgradeStepCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:47:16.460Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:47:23.594Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:47:23.595Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "details": {
+    "stepNumber": 4,
+    "stepTitle": "Final Validation"
+  },
+  "event": "upgradeStepStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:47:23.595Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:47:23.596Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:47:23.596Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:47:23.659Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:47:23.660Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "details": {
+    "stepNumber": 4,
+    "stepTitle": "Final Validation"
+  },
+  "event": "upgradeStepStarted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:47:23.660Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:47:23.661Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'upgradeStepStarted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:47:23.661Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:54:11.402Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:54:11.402Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:11.403Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:54:11.403Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:54:11.403Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:54:11.451Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:54:11.451Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:11.452Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:54:11.452Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:54:11.453Z [INFO] Project java version: 21
+2026-03-03T05:54:11.454Z [INFO] Maven project detected.
+2026-03-03T05:54:11.454Z [INFO] Build tool type: mvnw
+2026-03-03T05:54:11.461Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+  "version": "21"
+}
+2026-03-03T05:54:11.461Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:54:11.462Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "name": "java",
+    "version": "21"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:54:11.462Z [INFO] [MavenBuildTool] Getting all module coordinates of d:\VS-code save\EAS\demo
+2026-03-03T05:54:11.462Z [INFO] [MavenBuildTool] Getting effective POMs of d:\VS-code save\EAS\demo
+2026-03-03T05:54:11.462Z [INFO] [Environment] Running command (Java undefined): mvnw help:effective-pom -Doutput=effective-pom-bf964804-2932-4d48-90a7-e3d50d51ff8c.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.5.1:effective-pom (default-cli) @ demo ---
+[INFO] Effective-POM written to: d:\VS-code save\EAS\demo\effective-pom-bf964804-2932-4d48-90a7-e3d50d51ff8c.log
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.652 s
+[INFO] Finished at: 2026-03-03T12:54:19+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:54:19.288Z [INFO] [BaseBuildTool] Found 1 modules: .
+2026-03-03T05:54:19.307Z [INFO] [BaseBuildTool] Finish counting Java and class files
+2026-03-03T05:54:19.308Z [INFO] [MavenBuildTool] Cleaning d:\VS-code save\EAS\demo using Maven
+2026-03-03T05:54:19.308Z [INFO] [Environment] Running command (Java undefined): mvnw clean -q -B -fn
+2026-03-03T05:54:26.530Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'buildCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:54:26.531Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:54:26.592Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:54:26.592Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:26.593Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:54:26.593Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:54:26.593Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:54:26.673Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:54:26.673Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:26.674Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:54:26.674Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:54:26.675Z [INFO] Project java version: 21
+2026-03-03T05:54:26.680Z [INFO] Maven project detected.
+2026-03-03T05:54:26.681Z [INFO] Build tool type: mvnw
+2026-03-03T05:54:26.693Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+  "version": "21"
+}
+2026-03-03T05:54:26.694Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:54:26.694Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "name": "java",
+    "version": "21"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:54:26.695Z [INFO] [BaseBuildTool] Gathering test results...
+2026-03-03T05:54:26.698Z [INFO] [BaseBuildTool] Summarizing surefire reports.
+2026-03-03T05:54:26.698Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'testCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:54:26.699Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:54:40.458Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:54:40.460Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "details": {
+    "commitId": "f27a4d897c55ddbb72b50a8f5d414595eff35e2f",
+    "stepNumber": 4,
+    "stepTitle": "Final Validation"
+  },
+  "event": "upgradeValidationCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:40.460Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:54:40.461Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:54:40.461Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:54:40.511Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:54:40.513Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "details": {
+    "commitId": "f27a4d897c55ddbb72b50a8f5d414595eff35e2f",
+    "stepNumber": 4,
+    "stepTitle": "Final Validation"
+  },
+  "event": "upgradeValidationCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:40.515Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:54:40.516Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'upgradeValidationCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:54:40.516Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:54:40.633Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:54:40.633Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "planExecutionCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:40.634Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:54:40.634Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:54:40.634Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:54:40.806Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:54:40.806Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "planExecutionCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:54:40.807Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:54:41.159Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'planExecutionCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:54:41.160Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:57:24.947Z [INFO] ---------------------prepare validate_cves_for_java----------------------
+2026-03-03T05:57:24.948Z [INFO] [Tool.prepareInvocation]({name: validate_cves_for_java, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "dependencies": [
+    "org.springframework.boot:spring-boot-starter-web:4.0.3",
+    "org.springframework.boot:spring-boot-starter-data-jpa:4.0.3",
+    "org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3",
+    "com.h2database:h2:2.4.240",
+    "org.springframework.boot:spring-boot-devtools:4.0.3",
+    "org.projectlombok:lombok:1.18.42",
+    "org.springframework.boot:spring-boot-starter-test:4.0.3",
+    "org.springframework:spring-core:7.0.5",
+    "org.springframework:spring-web:7.0.5",
+    "org.hibernate.orm:hibernate-core:7.2.4.Final",
+    "org.apache.tomcat.embed:tomcat-embed-core:11.0.18",
+    "tools.jackson.core:jackson-databind:3.0.4",
+    "org.junit.jupiter:junit-jupiter:6.0.3",
+    "org.mockito:mockito-core:5.20.0"
+  ]
+}}).
+2026-03-03T05:57:24.948Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:57:24.949Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Validate CVEs"
+}}).
+2026-03-03T05:57:24.950Z [INFO] ----------------------prepared validate_cves_for_java----------------------
+2026-03-03T05:57:24.998Z [INFO] ----------------------invoke validate_cves_for_java----------------------
+2026-03-03T05:57:24.998Z [INFO] [Tool.invoke]({name: validate_cves_for_java, input: {
+  "sessionId": "20260303052420",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "dependencies": [
+    "org.springframework.boot:spring-boot-starter-web:4.0.3",
+    "org.springframework.boot:spring-boot-starter-data-jpa:4.0.3",
+    "org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3",
+    "com.h2database:h2:2.4.240",
+    "org.springframework.boot:spring-boot-devtools:4.0.3",
+    "org.projectlombok:lombok:1.18.42",
+    "org.springframework.boot:spring-boot-starter-test:4.0.3",
+    "org.springframework:spring-core:7.0.5",
+    "org.springframework:spring-web:7.0.5",
+    "org.hibernate.orm:hibernate-core:7.2.4.Final",
+    "org.apache.tomcat.embed:tomcat-embed-core:11.0.18",
+    "tools.jackson.core:jackson-databind:3.0.4",
+    "org.junit.jupiter:junit-jupiter:6.0.3",
+    "org.mockito:mockito-core:5.20.0"
+  ]
+}}).
+2026-03-03T05:57:24.999Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:57:24.999Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:57:25.000Z [INFO] Project java version: 21
+2026-03-03T05:57:25.000Z [INFO] Maven project detected.
+2026-03-03T05:57:25.001Z [INFO] Build tool type: mvnw
+2026-03-03T05:57:25.014Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+  "version": "21"
+}
+2026-03-03T05:57:25.015Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:57:25.015Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Users\\Chien\\.gradle\\jdks\\eclipse_adoptium-21-amd64-windows\\jdk-21.0.9+10\\bin",
+    "name": "java",
+    "version": "21"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:57:25.016Z [INFO] [Environment] Running command (Java undefined): mvnw dependency:tree -B
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.9.0:tree (default-cli) @ demo ---
+[INFO] com.example:demo:jar:0.0.1-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:4.0.3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-jackson:jar:4.0.3:compile
+[INFO] |  |  \- org.springframework.boot:spring-boot-jackson:jar:4.0.3:compile
+[INFO] |  |     \- tools.jackson.core:jackson-databind:jar:3.0.4:compile
+[INFO] |  |        +- com.fasterxml.jackson.core:jackson-annotations:jar:2.20:compile
+[INFO] |  |        \- tools.jackson.core:jackson-core:jar:3.0.4:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:4.0.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-tomcat-runtime:jar:4.0.3:compile
+[INFO] |  |  |  +- org.springframework.boot:spring-boot-web-server:jar:4.0.3:compile
+[INFO] |  |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:11.0.18:compile
+[INFO] |  |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:11.0.18:compile
+[INFO] |  |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:11.0.18:compile
+[INFO] |  |  \- org.springframework.boot:spring-boot-tomcat:jar:4.0.3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-http-converter:jar:4.0.3:compile
+[INFO] |  |  \- org.springframework:spring-web:jar:7.0.5:compile
+[INFO] |  |     +- org.springframework:spring-beans:jar:7.0.5:compile
+[INFO] |  |     \- io.micrometer:micrometer-observation:jar:1.16.3:compile
+[INFO] |  |        \- io.micrometer:micrometer-commons:jar:1.16.3:compile
+[INFO] |  \- org.springframework.boot:spring-boot-webmvc:jar:4.0.3:compile
+[INFO] |     +- org.springframework.boot:spring-boot-servlet:jar:4.0.3:compile
+[INFO] |     \- org.springframework:spring-webmvc:jar:7.0.5:compile
+[INFO] |        +- org.springframework:spring-aop:jar:7.0.5:compile
+[INFO] |        \- org.springframework:spring-expression:jar:7.0.5:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-data-jpa:jar:4.0.3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:4.0.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:4.0.3:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.5.32:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.5.32:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.25.3:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.25.3:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.17:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:3.0.0:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:2.5:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-jdbc:jar:4.0.3:compile
+[INFO] |  |  \- com.zaxxer:HikariCP:jar:7.0.2:compile
+[INFO] |  +- org.springframework.boot:spring-boot-data-jpa:jar:4.0.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-data-commons:jar:4.0.3:compile
+[INFO] |  |  |  +- org.springframework.boot:spring-boot-persistence:jar:4.0.3:compile
+[INFO] |  |  |  \- org.springframework.data:spring-data-commons:jar:4.0.3:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-hibernate:jar:4.0.3:compile
+[INFO] |  |  |  +- org.springframework.boot:spring-boot-jpa:jar:4.0.3:compile
+[INFO] |  |  |  |  \- jakarta.persistence:jakarta.persistence-api:jar:3.2.0:compile
+[INFO] |  |  |  +- org.hibernate.orm:hibernate-core:jar:7.2.4.Final:compile
+[INFO] |  |  |  |  +- jakarta.transaction:jakarta.transaction-api:jar:2.0.1:compile
+[INFO] |  |  |  |  +- org.jboss.logging:jboss-logging:jar:3.6.2.Final:runtime
+[INFO] |  |  |  |  +- org.hibernate.models:hibernate-models:jar:1.0.1:runtime
+[INFO] |  |  |  |  +- com.fasterxml:classmate:jar:1.7.3:runtime
+[INFO] |  |  |  |  +- org.glassfish.jaxb:jaxb-runtime:jar:4.0.6:runtime
+[INFO] |  |  |  |  |  \- org.glassfish.jaxb:jaxb-core:jar:4.0.6:runtime
+[INFO] |  |  |  |  |     +- org.eclipse.angus:angus-activation:jar:2.0.3:runtime
+[INFO] |  |  |  |  |     +- org.glassfish.jaxb:txw2:jar:4.0.6:runtime
+[INFO] |  |  |  |  |     \- com.sun.istack:istack-commons-runtime:jar:4.1.2:runtime
+[INFO] |  |  |  |  \- jakarta.inject:jakarta.inject-api:jar:2.0.1:runtime
+[INFO] |  |  |  \- org.springframework:spring-orm:jar:7.0.5:compile
+[INFO] |  |  +- org.springframework.data:spring-data-jpa:jar:4.0.3:compile
+[INFO] |  |  |  +- org.springframework:spring-tx:jar:7.0.5:compile
+[INFO] |  |  |  \- org.antlr:antlr4-runtime:jar:4.13.2:compile
+[INFO] |  |  \- org.springframework:spring-aspects:jar:7.0.5:compile
+[INFO] |  |     \- org.aspectj:aspectjweaver:jar:1.9.25.1:compile
+[INFO] |  \- org.springframework.boot:spring-boot-jdbc:jar:4.0.3:compile
+[INFO] |     +- org.springframework.boot:spring-boot-sql:jar:4.0.3:compile
+[INFO] |     +- org.springframework.boot:spring-boot-transaction:jar:4.0.3:compile
+[INFO] |     \- org.springframework:spring-jdbc:jar:7.0.5:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-thymeleaf:jar:4.0.3:compile
+[INFO] |  \- org.springframework.boot:spring-boot-thymeleaf:jar:4.0.3:compile
+[INFO] |     \- org.thymeleaf:thymeleaf-spring6:jar:3.1.3.RELEASE:compile
+[INFO] |        \- org.thymeleaf:thymeleaf:jar:3.1.3.RELEASE:compile
+[INFO] |           +- org.attoparser:attoparser:jar:2.0.7.RELEASE:compile
+[INFO] |           \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
+[INFO] +- com.h2database:h2:jar:2.4.240:runtime
+[INFO] +- org.springframework.boot:spring-boot-devtools:jar:4.0.3:runtime (optional)
+[INFO] |  +- org.springframework.boot:spring-boot:jar:4.0.3:compile
+[INFO] |  |  \- org.springframework:spring-context:jar:7.0.5:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:4.0.3:compile
+[INFO] +- org.projectlombok:lombok:jar:1.18.42:compile (optional)
+[INFO] \- org.springframework.boot:spring-boot-starter-test:jar:4.0.3:test
+[INFO]    +- org.springframework.boot:spring-boot-test:jar:4.0.3:test
+[INFO]    +- org.springframework.boot:spring-boot-test-autoconfigure:jar:4.0.3:test
+[INFO]    +- com.jayway.jsonpath:json-path:jar:2.10.0:test
+[INFO]    |  \- org.slf4j:slf4j-api:jar:2.0.17:compile
+[INFO]    +- jakarta.xml.bind:jakarta.xml.bind-api:jar:4.0.4:runtime
+[INFO]    |  \- jakarta.activation:jakarta.activation-api:jar:2.1.4:runtime
+[INFO]    +- net.minidev:json-smart:jar:2.6.0:test
+[INFO]    |  \- net.minidev:accessors-smart:jar:2.6.0:test
+[INFO]    |     \- org.ow2.asm:asm:jar:9.7.1:test
+[INFO]    +- org.assertj:assertj-core:jar:3.27.7:test
+[INFO]    |  \- net.bytebuddy:byte-buddy:jar:1.17.8:runtime
+[INFO]    +- org.awaitility:awaitility:jar:4.3.0:test
+[INFO]    +- org.hamcrest:hamcrest:jar:3.0:test
+[INFO]    +- org.junit.jupiter:junit-jupiter:jar:6.0.3:test
+[INFO]    |  +- org.junit.jupiter:junit-jupiter-api:jar:6.0.3:test
+[INFO]    |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO]    |  |  +- org.junit.platform:junit-platform-commons:jar:6.0.3:test
+[INFO]    |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO]    |  +- org.junit.jupiter:junit-jupiter-params:jar:6.0.3:test
+[INFO]    |  \- org.junit.jupiter:junit-jupiter-engine:jar:6.0.3:test
+[INFO]    |     \- org.junit.platform:junit-platform-engine:jar:6.0.3:test
+[INFO]    +- org.mockito:mockito-core:jar:5.20.0:test
+[INFO]    |  +- net.bytebuddy:byte-buddy-agent:jar:1.17.8:test
+[INFO]    |  \- org.objenesis:objenesis:jar:3.3:test
+[INFO]    +- org.mockito:mockito-junit-jupiter:jar:5.20.0:test
+[INFO]    +- org.skyscreamer:jsonassert:jar:1.5.3:test
+[INFO]    |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO]    +- org.springframework:spring-core:jar:7.0.5:compile
+[INFO]    |  +- commons-logging:commons-logging:jar:1.3.5:compile
+[INFO]    |  \- org.jspecify:jspecify:jar:1.0.0:compile
+[INFO]    +- org.springframework:spring-test:jar:7.0.5:test
+[INFO]    \- org.xmlunit:xmlunit-core:jar:2.10.4:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.139 s
+[INFO] Finished at: 2026-03-03T12:57:33+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:57:33.199Z [INFO] [MavenBuildTool] Successfully got dependency tree of d:\VS-code save\EAS\demo
+2026-03-03T05:57:33.200Z [INFO] [MavenBuildTool] Getting Java version of d:\VS-code save\EAS\demo from pom.xml
+2026-03-03T05:57:33.200Z [INFO] [MavenBuildTool] Searching for pom.xml files in d:\VS-code save\EAS\demo
+2026-03-03T05:57:33.202Z [INFO] [MavenBuildTool] Getting all module coordinates of d:\VS-code save\EAS\demo
+2026-03-03T05:57:33.202Z [INFO] [MavenBuildTool] Getting effective POMs of d:\VS-code save\EAS\demo
+2026-03-03T05:57:33.222Z [INFO] [Environment] Running command (Java undefined): mvnw help:effective-pom -Doutput=effective-pom-ddf0d1f4-4f50-4f87-9853-7863c11b4aa9.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.5.1:effective-pom (default-cli) @ demo ---
+[INFO] Effective-POM written to: d:\VS-code save\EAS\demo\effective-pom-ddf0d1f4-4f50-4f87-9853-7863c11b4aa9.log
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.607 s
+[INFO] Finished at: 2026-03-03T12:57:40+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:57:40.965Z [INFO] [MavenBuildTool] Found pom.xml files: d:\VS-code save\EAS\demo\pom.xml
+2026-03-03T05:57:40.967Z [INFO] [MavenBuildTool] Java version found in d:\VS-code save\EAS\demo\pom.xml: 21
+2026-03-03T05:57:40.982Z [INFO] Getting CVEs for dependencies: org.springframework.boot:spring-boot-starter-web:4.0.3,org.springframework.boot:spring-boot-starter-data-jpa:4.0.3,org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3,com.h2database:h2:2.4.240,org.springframework.boot:spring-boot-devtools:4.0.3,org.projectlombok:lombok:1.18.42,org.springframework.boot:spring-boot-starter-test:4.0.3,org.springframework:spring-core:7.0.5,org.springframework:spring-web:7.0.5,org.hibernate.orm:hibernate-core:7.2.4.Final,org.apache.tomcat.embed:tomcat-embed-core:11.0.18,tools.jackson.core:jackson-databind:3.0.4,org.junit.jupiter:junit-jupiter:6.0.3,org.mockito:mockito-core:5.20.0
+2026-03-03T05:57:40.983Z [INFO] getting CVEs for dependencies:
+ - org.springframework.boot:spring-boot-starter-web:4.0.3
+  - org.springframework.boot:spring-boot-starter-data-jpa:4.0.3
+  - org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3
+  - com.h2database:h2:2.4.240
+  - org.springframework.boot:spring-boot-devtools:4.0.3
+  - org.projectlombok:lombok:1.18.42
+  - org.springframework.boot:spring-boot-starter-test:4.0.3
+  - org.springframework:spring-core:7.0.5
+  - org.springframework:spring-web:7.0.5
+  - org.hibernate.orm:hibernate-core:7.2.4.Final
+  - org.apache.tomcat.embed:tomcat-embed-core:11.0.18
+  - tools.jackson.core:jackson-databind:3.0.4
+  - org.junit.jupiter:junit-jupiter:6.0.3
+  - org.mockito:mockito-core:5.20.0...
+2026-03-03T05:57:40.983Z [INFO] getting gitHub access token...
+2026-03-03T05:57:40.985Z [INFO] Processing batch 1/1, size: 14
+2026-03-03T05:57:40.987Z [INFO] listing CVEs from GitHub for dependencies [
+  "org.springframework.boot:spring-boot-starter-web:4.0.3",
+  "org.springframework.boot:spring-boot-starter-data-jpa:4.0.3",
+  "org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3",
+  "com.h2database:h2:2.4.240",
+  "org.springframework.boot:spring-boot-devtools:4.0.3",
+  "org.projectlombok:lombok:1.18.42",
+  "org.springframework.boot:spring-boot-starter-test:4.0.3",
+  "org.springframework:spring-core:7.0.5",
+  "org.springframework:spring-web:7.0.5",
+  "org.hibernate.orm:hibernate-core:7.2.4.Final",
+  "org.apache.tomcat.embed:tomcat-embed-core:11.0.18",
+  "tools.jackson.core:jackson-databind:3.0.4",
+  "org.junit.jupiter:junit-jupiter:6.0.3",
+  "org.mockito:mockito-core:5.20.0"
+]
+2026-03-03T05:57:41.624Z [INFO] Fetched 0 total advisories across all pages
+2026-03-03T05:57:41.626Z [INFO] grouping CVEs and finding max patched version by dep...
+2026-03-03T05:57:41.627Z [INFO] done getting 0 CVEs for 14 dependencies
+2026-03-03T05:57:41.629Z [INFO] calculating patched version by dep...
+2026-03-03T05:57:41.631Z [INFO] finished getting CVEs for dependencies.
+2026-03-03T05:57:41.632Z [INFO] Found 0 dependencies with known CVEs
+2026-03-03T05:57:41.634Z [INFO] No known CVEs that need to be fixed are found for dependencies: org.springframework.boot:spring-boot-starter-web:4.0.3,org.springframework.boot:spring-boot-starter-data-jpa:4.0.3,org.springframework.boot:spring-boot-starter-thymeleaf:4.0.3,com.h2database:h2:2.4.240,org.springframework.boot:spring-boot-devtools:4.0.3,org.projectlombok:lombok:1.18.42,org.springframework.boot:spring-boot-starter-test:4.0.3,org.springframework:spring-core:7.0.5,org.springframework:spring-web:7.0.5,org.hibernate.orm:hibernate-core:7.2.4.Final,org.apache.tomcat.embed:tomcat-embed-core:11.0.18,tools.jackson.core:jackson-databind:3.0.4,org.junit.jupiter:junit-jupiter:6.0.3,org.mockito:mockito-core:5.20.0
+2026-03-03T05:57:41.635Z [INFO] [Tool.invoke]({result: {
+  "message": "No known CVEs that need to be fixed are found for the given dependencies."
+}}).
+2026-03-03T05:57:41.638Z [INFO] ----------------------invoked validate_cves_for_java----------------------
+2026-03-03T06:01:15.770Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T06:01:15.771Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "event": "summaryGenerated",
+  "phase": "summarize",
+  "status": "succeeded",
+  "message": "Java upgraded from 17 to 21 successfully. 100% test pass rate maintained."
+}}).
+2026-03-03T06:01:15.771Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T06:01:15.772Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T06:01:15.772Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T06:01:15.804Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T06:01:15.805Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "event": "summaryGenerated",
+  "phase": "summarize",
+  "status": "succeeded",
+  "message": "Java upgraded from 17 to 21 successfully. 100% test pass rate maintained."
+}}).
+2026-03-03T06:01:15.805Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T06:01:16.410Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'summaryGenerated' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T06:01:16.411Z [INFO] ----------------------invoked report_event----------------------

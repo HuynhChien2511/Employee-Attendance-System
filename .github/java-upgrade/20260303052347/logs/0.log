@@ -1,0 +1,17 @@
+2026-03-03T05:23:47.941Z [INFO] ----------------------invoke redirect_to_upgrade_agent----------------------
+2026-03-03T05:23:47.941Z [INFO] [Tool.invoke]({name: redirect_to_upgrade_agent, input: {
+  "originalPrompt": "upgrade java runtime to the LTS version Java 21",
+  "projectPath": "d:\\VS-code save\\EAS\\demo"
+}}).
+2026-03-03T05:23:47.942Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:23:47.942Z [INFO] [RedirectToUpgradeAgentTool] Redirecting to custom agent "modernize-java-upgrade" with prompt: upgrade java runtime to the LTS version Java 21
+2026-03-03T05:23:47.995Z [INFO] [RedirectToUpgradeAgentTool] Redirected to custom agent "modernize-java-upgrade". User MUST switch to the new agent to continue.
+2026-03-03T05:23:47.996Z [INFO] [Tool.invoke]({result: {
+  "message": "The upgrade request has been redirected to the \"modernize-java-upgrade\" agent in a new chat session. You MUST! stop processing in this session.",
+  "result": {
+    "redirected": true,
+    "agentName": "modernize-java-upgrade",
+    "prompt": "upgrade java runtime to the LTS version Java 21"
+  }
+}}).
+2026-03-03T05:23:47.997Z [INFO] ----------------------invoked redirect_to_upgrade_agent----------------------
