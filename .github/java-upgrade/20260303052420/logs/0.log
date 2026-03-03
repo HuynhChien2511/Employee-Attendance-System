@@ -356,3 +356,161 @@
   "message": "Event 'environmentSetup' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
 }}).
 2026-03-03T05:34:42.878Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:43:31.711Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:43:31.713Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:43:31.715Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:43:31.716Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:43:31.716Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:43:31.740Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:43:31.741Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "buildCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:43:31.741Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:43:31.741Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:43:31.742Z [INFO] Project java version: 17
+2026-03-03T05:43:31.743Z [INFO] Maven project detected.
+2026-03-03T05:43:31.743Z [INFO] Build tool type: mvnw
+2026-03-03T05:43:31.752Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+  "version": "17"
+}
+2026-03-03T05:43:31.752Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:43:31.752Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "name": "java",
+    "version": "17"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:43:31.753Z [INFO] [MavenBuildTool] Getting all module coordinates of d:\VS-code save\EAS\demo
+2026-03-03T05:43:31.753Z [INFO] [MavenBuildTool] Getting effective POMs of d:\VS-code save\EAS\demo
+2026-03-03T05:43:31.753Z [INFO] [Environment] Running command (Java undefined): mvnw help:effective-pom -Doutput=effective-pom-f5ce17cf-37a9-42f9-bb10-22698ad885ae.log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.5.1:effective-pom (default-cli) @ demo ---
+[INFO] Effective-POM written to: d:\VS-code save\EAS\demo\effective-pom-f5ce17cf-37a9-42f9-bb10-22698ad885ae.log
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.608 s
+[INFO] Finished at: 2026-03-03T12:43:39+07:00
+[INFO] ------------------------------------------------------------------------
+2026-03-03T05:43:39.211Z [INFO] [BaseBuildTool] Found 1 modules: .
+2026-03-03T05:43:39.218Z [INFO] [BaseBuildTool] Finish counting Java and class files
+2026-03-03T05:43:39.219Z [INFO] [MavenBuildTool] Cleaning d:\VS-code save\EAS\demo using Maven
+2026-03-03T05:43:39.219Z [INFO] [Environment] Running command (Java undefined): mvnw clean -q -B -fn
+2026-03-03T05:43:46.273Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'buildCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:43:46.274Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:45:22.170Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:45:22.171Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.171Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:45:22.172Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:45:22.172Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:45:22.213Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:45:22.214Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "testCompleted",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.214Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:45:22.215Z [INFO] Project d:\VS-code save\EAS\demo is a maven project, try to get java version from pom.xml
+2026-03-03T05:45:22.215Z [INFO] Project java version: 17
+2026-03-03T05:45:22.216Z [INFO] Maven project detected.
+2026-03-03T05:45:22.216Z [INFO] Build tool type: mvnw
+2026-03-03T05:45:22.224Z [INFO] JDK: {
+  "name": "java",
+  "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+  "version": "17"
+}
+2026-03-03T05:45:22.224Z [INFO] Build tool: {
+  "name": "mvnw",
+  "path": ".",
+  "version": ""
+}
+2026-03-03T05:45:22.224Z [INFO] Project config: {
+  "buildTool": {
+    "path": ".",
+    "name": "mvnw",
+    "version": ""
+  },
+  "jdk": {
+    "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin",
+    "name": "java",
+    "version": "17"
+  },
+  "name": "demo",
+  "dir": "d:\\VS-code save\\EAS\\demo"
+}
+2026-03-03T05:45:22.225Z [INFO] [BaseBuildTool] Gathering test results...
+2026-03-03T05:45:22.230Z [INFO] [BaseBuildTool] Summarizing surefire reports.
+2026-03-03T05:45:22.230Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'testCompleted' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:45:22.231Z [INFO] ----------------------invoked report_event----------------------
+2026-03-03T05:45:22.345Z [INFO] ---------------------prepare report_event----------------------
+2026-03-03T05:45:22.346Z [INFO] [Tool.prepareInvocation]({name: report_event, input: {
+  "event": "baselineSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.346Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2026-03-03T05:45:22.347Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Report upgrade event"
+}}).
+2026-03-03T05:45:22.348Z [INFO] ----------------------prepared report_event----------------------
+2026-03-03T05:45:22.429Z [INFO] ----------------------invoke report_event----------------------
+2026-03-03T05:45:22.430Z [INFO] [Tool.invoke]({name: report_event, input: {
+  "event": "baselineSetup",
+  "phase": "execute",
+  "projectPath": "d:\\VS-code save\\EAS\\demo",
+  "sessionId": "20260303052420",
+  "status": "succeeded"
+}}).
+2026-03-03T05:45:22.447Z [INFO] [Tool.invoke] do invoke.
+2026-03-03T05:45:22.449Z [INFO] [Tool.invoke]({result: {
+  "message": "Event 'baselineSetup' reported!\nSession ID: 20260303052420,\nSession Dir: d:\\VS-code save\\EAS\\demo\\.github\\java-upgrade\\20260303052420"
+}}).
+2026-03-03T05:45:22.449Z [INFO] ----------------------invoked report_event----------------------
