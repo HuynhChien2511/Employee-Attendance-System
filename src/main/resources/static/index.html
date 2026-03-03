@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attendance System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Employee Attendance System</h1>
+            <nav>
+                <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+                <button class="nav-btn" data-page="employees">Employees</button>
+                <button class="nav-btn" data-page="attendance">Attendance</button>
+                <button class="nav-btn" data-page="shifts">Shifts</button>
+                <button class="nav-btn" data-page="leave">Leave Requests</button>
+            </nav>
+        </header>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <h2>Dashboard</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Employees</h3>
+                    <p class="stat-number" id="totalEmployees">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Present Today</h3>
+                    <p class="stat-number" id="presentToday">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Leaves</h3>
+                    <p class="stat-number" id="pendingLeaves">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Shifts</h3>
+                    <p class="stat-number" id="activeShifts">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees Page -->
+        <div id="employees" class="page">
+            <h2>Employee Management</h2>
+            <button class="btn-primary" onclick="showEmployeeForm()">Add New Employee</button>
+            
+            <div id="employeeFormContainer" class="form-container" style="display: none;">
+                <h3>Employee Details</h3>
+                <form id="employeeForm">
+                    <input type="hidden" id="empId">
+                    <div class="form-row">
+                        <input type="text" id="firstName" placeholder="First Name" required>
+                        <input type="text" id="lastName" placeholder="Last Name" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="email" id="email" placeholder="Email" required>
+                        <input type="text" id="employeeId" placeholder="Employee ID" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="tel" id="phone" placeholder="Phone">
+                        <input type="text" id="department" placeholder="Department">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="position" placeholder="Position">
+                        <input type="date" id="hireDate" placeholder="Hire Date">
+                    </div>
+                    <div class="form-row">
+                        <select id="status">
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                            <option value="ON_LEAVE">On Leave</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Employee</button>
+                        <button type="button" class="btn-secondary" onclick="hideEmployeeForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table id="employeeTable">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Attendance Page -->
+        <div id="attendance" class="page">
+            <h2>Attendance Management</h2>
+            
+            <div class="attendance-controls">
+                <div class="form-row">
+                    <select id="attendanceEmployee" class="form-control">
+                        <option value="">Select Employee</option>
+                    </select>
+                    <button class="btn-success" onclick="checkIn()">Check In</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Hours Worked</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Shifts Page -->
+        <div id="shifts" class="page">
+            <h2>Shift Management</h2>
+            <button class="btn-primary" onclick="showShiftForm()">Create New Shift</button>
+            
+            <div id="shiftFormContainer" class="form-container" style="display: none;">
+                <h3>Shift Details</h3>
+                <form id="shiftForm">
+                    <input type="text" id="shiftName" placeholder="Shift Name" required>
+                    <div class="form-row">
+                        <input type="time" id="startTime" placeholder="Start Time" required>
+                        <input type="time" id="endTime" placeholder="End Time" required>
+                    </div>
+                    <textarea id="shiftDescription" placeholder="Description" rows="3"></textarea>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Shift</button>
+                        <button type="button" class="btn-secondary" onclick="hideShiftForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table id="shiftTable">
+                    <thead>
+                        <tr>
+                            <th>Shift Name</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Leave Requests Page -->
+        <div id="leave" class="page">
+            <h2>Leave Management</h2>
+            <button class="btn-primary" onclick="showLeaveForm()">Request Leave</button>
+            
+            <div id="leaveFormContainer" class="form-container" style="display: none;">
+                <h3>Leave Request</h3>
+                <form id="leaveForm">
+                    <select id="leaveEmployee" class="form-control" required>
+                        <option value="">Select Employee</option>
+                    </select>
+                    <select id="leaveType" class="form-control" required>
+                        <option value="SICK_LEAVE">Sick Leave</option>
+                        <option value="VACATION">Vacation</option>
+                        <option value="PERSONAL">Personal</option>
+                        <option value="MATERNITY">Maternity</option>
+                        <option value="PATERNITY">Paternity</option>
+                        <option value="UNPAID">Unpaid</option>
+                    </select>
+                    <div class="form-row">
+                        <input type="date" id="startDate" placeholder="Start Date" required>
+                        <input type="date" id="endDate" placeholder="End Date" required>
+                    </div>
+                    <textarea id="reason" placeholder="Reason" rows="3" required></textarea>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Submit Request</button>
+                        <button type="button" class="btn-secondary" onclick="hideLeaveForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table id="leaveTable">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Leave Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
