@@ -48,6 +48,7 @@ A comprehensive web-based Employee Attendance System built with Spring Boot and 
 
 ### Backend
 - **Spring Boot 4.0.3** - Application framework
+- **Java 21 LTS** - Runtime environment
 - **Spring Data JPA** - Database access
 - **H2 Database** - In-memory database
 - **Lombok** - Reduces boilerplate code
@@ -62,8 +63,8 @@ A comprehensive web-based Employee Attendance System built with Spring Boot and 
 ## Getting Started
 
 ### Prerequisites
-- Java 17 or higher
-- Maven 3.6+
+- Java 21 LTS or higher
+- Maven 3.6+ (Maven Wrapper included)
 
 ### Installation & Running
 
@@ -229,6 +230,18 @@ Potential features for future versions:
 - Overtime tracking
 - Holiday calendar management
 - Performance reviews integration
+
+## Upgrade History
+
+### Java 17 → 21 LTS (March 2026)
+- **Session ID**: 20260303052420
+- **Status**: ✅ Complete
+- **Changes**: Updated project to use Java 21 LTS
+- **Test Results**: 100% pass rate maintained
+- **CVE Scan**: No vulnerabilities detected
+- **Documentation**: [View detailed upgrade report](.github/java-upgrade/20260303052420/summary.md)
+
+For detailed upgrade information, see the upgrade documentation in `.github/java-upgrade/20260303052420/`.
 
 ## License
 
