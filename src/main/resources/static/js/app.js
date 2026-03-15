@@ -1,3 +1,22 @@
+/*
+ * FILE: app.js
+ * PURPOSE: Legacy standalone frontend script for the older multi-page admin demo UI.
+ *          Handles navigation, dashboard loading, employee CRUD, attendance actions,
+ *          shift management, and leave workflows against the /api endpoints.
+ *
+ * KEY FUNCTIONS:
+ *  - showPage(), loadDashboard(), loadEmployees(), loadAttendance(), loadShifts(),
+ *    loadLeaveRequests(): switch pages and fetch data into the DOM.
+ *  - showEmployeeForm()/hideEmployeeForm(), showShiftForm()/hideShiftForm(),
+ *    showLeaveForm()/hideLeaveForm(): toggle inline forms.
+ *  - checkIn(), checkOut(), approveLeave(), rejectLeave(), deleteEmployee(): write actions.
+ *  - formatDateTime(), isToday(): formatting helpers.
+ *
+ * HOW TO MODIFY:
+ *  - This script targets the older /api/employees, /api/attendance, /api/shifts,
+ *    and /api/leave endpoints. Keep it in sync if those legacy controllers change.
+ *  - If this file becomes unused, remove its script tag from any pages before deleting it.
+ */
 const API_BASE_URL = 'http://localhost:8080/api';
 
 // Navigation

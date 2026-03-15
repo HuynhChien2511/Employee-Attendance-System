@@ -1,12 +1,35 @@
+/*
+ * FILE: style.css
+ * PURPOSE: Shared stylesheet for the older standalone frontend screens that use
+ *          external CSS instead of inline page styles. Defines the warm-teal visual
+ *          theme, layout containers, navigation buttons, cards, and forms.
+ *
+ * HOW TO MODIFY:
+ *  - Adjust the theme through the :root CSS variables first before changing many selectors.
+ *  - Keep component naming aligned with the older markup that loads this file.
+ *  - New shared UI primitives should be added here only if they are reused across pages;
+ *    otherwise keep page-specific styles local to that page.
+ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+:root {
+    --bg-grad-start: #0f766e;
+    --bg-grad-end: #f59e0b;
+    --panel-bg: #fffdf8;
+    --panel-muted: #f5f7f2;
+    --primary: #0f766e;
+    --primary-2: #14b8a6;
+    --primary-ink: #0b3d38;
+    --line: #d8e2dc;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Poppins', 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, var(--bg-grad-start) 0%, var(--bg-grad-end) 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -14,14 +37,14 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    background: white;
+    background: var(--panel-bg);
     border-radius: 15px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
 header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
     color: white;
     padding: 30px;
 }
@@ -57,7 +80,7 @@ nav {
 
 .nav-btn.active {
     background: white;
-    color: #667eea;
+    color: var(--primary);
     border-color: white;
 }
 
@@ -74,7 +97,7 @@ nav {
     color: #333;
     margin-bottom: 25px;
     font-size: 2em;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 3px solid var(--primary);
     padding-bottom: 10px;
 }
 
@@ -87,12 +110,12 @@ nav {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
     padding: 30px;
     border-radius: 15px;
     color: white;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 30px rgba(15, 118, 110, 0.35);
     transition: transform 0.3s ease;
 }
 
@@ -125,13 +148,13 @@ nav {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 20px rgba(15, 118, 110, 0.35);
 }
 
 .btn-secondary {
@@ -156,15 +179,15 @@ nav {
 
 /* Forms */
 .form-container {
-    background: #f8f9fa;
+    background: var(--panel-muted);
     padding: 25px;
     border-radius: 10px;
     margin: 25px 0;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--line);
 }
 
 .form-container h3 {
-    color: #667eea;
+    color: var(--primary);
     margin-bottom: 20px;
 }
 
@@ -177,7 +200,7 @@ nav {
 
 input, select, textarea {
     padding: 12px;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--line);
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s ease;
@@ -185,13 +208,13 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--primary-2);
 }
 
 .form-control {
     width: 100%;
     padding: 12px;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--line);
     border-radius: 8px;
     font-size: 16px;
 }
@@ -213,11 +236,11 @@ input:focus, select:focus, textarea:focus {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: var(--panel-bg);
 }
 
 thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
     color: white;
 }
 
@@ -239,7 +262,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f1f6f5;
 }
 
 .status-badge {
@@ -272,7 +295,7 @@ tbody tr:hover {
 
 /* Attendance Controls */
 .attendance-controls {
-    background: #f8f9fa;
+    background: var(--panel-muted);
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 25px;

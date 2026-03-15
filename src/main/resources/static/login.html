@@ -1,0 +1,108 @@
+<!--
+FILE: login.html
+PURPOSE: Login page for all roles. Presents the credential form and redirects users
+to /admin, /manager, or /employee after successful authentication.
+
+KEY CLIENT FUNCTIONS:
+- doLogin(e): prevents default submit, posts credentials to /api/auth/login,
+  displays errors, and redirects based on returned role.
+
+HOW TO MODIFY:
+- Keep the success redirect logic aligned with roles returned by AuthController.
+- If login response fields change, update doLogin() accordingly.
+- This page contains its own styles and script, so layout and login behavior changes both live here.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAS – Login</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins','Trebuchet MS','Segoe UI',sans-serif;background:linear-gradient(135deg,#115e59 0%,#0ea5a4 50%,#f59e0b 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .card{background:#fffdf8;border-radius:16px;padding:40px 48px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.24)}
+  .logo{text-align:center;margin-bottom:28px}
+  .logo .icon{font-size:48px;display:block;margin-bottom:8px}
+  .logo h1{font-size:22px;font-weight:700;color:#115e59}
+  .logo p{font-size:13px;color:#666;margin-top:4px}
+  .form-group{margin-bottom:20px}
+  label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px}
+  input{width:100%;padding:10px 14px;border:2px solid #d8e2dc;border-radius:8px;font-size:14px;transition:.2s;background:#fff}
+  input:focus{outline:none;border-color:#14b8a6}
+  .btn{width:100%;padding:12px;background:linear-gradient(135deg,#115e59,#0ea5a4);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px}
+  .btn:hover{opacity:.9;transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .error{background:#fdecea;color:#c62828;border:1px solid #ef9a9a;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;display:none}
+  .loading{display:none;text-align:center;color:#666;font-size:13px;margin-top:10px}
+  .hint{margin-top:20px;background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;padding:12px;font-size:12px;color:#0f766e}
+  .hint b{display:block;margin-bottom:4px}
+  .hint code{background:#ccfbf1;padding:1px 5px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <span class="icon">🏢</span>
+    <h1>Employee Attendance System</h1>
+    <p>Sign in to your account</p>
+  </div>
+  <div class="error" id="errMsg"></div>
+  <form id="loginForm" onsubmit="doLogin(event)">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+    </div>
+    <button class="btn" type="submit">Sign In</button>
+    <div class="loading" id="loading">⏳ Signing in…</div>
+  </form>
+  <div class="hint">
+    <b>Demo credentials:</b>
+    Admin: <code>admin</code> / <code>Admin@123</code><br>
+    Manager: <code>manager.hr</code> / <code>Manager@123</code><br>
+    Employee: <code>john.doe</code> / <code>Employee@123</code>
+  </div>
+</div>
+<script>
+async function doLogin(e) {
+  e.preventDefault();
+  const err = document.getElementById('errMsg');
+  const loading = document.getElementById('loading');
+  const btn = document.querySelector('.btn');
+  err.style.display = 'none';
+  btn.disabled = true;
+  loading.style.display = 'block';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      err.textContent = data.error || 'Login failed. Check your credentials.';
+      err.style.display = 'block';
+    } else {
+      const role = data.role;
+      if (role === 'ADMIN')          window.location.href = '/admin';
+      else if (role === 'MANAGER')   window.location.href = '/manager';
+      else                           window.location.href = '/employee';
+    }
+  } catch {
+    err.textContent = 'Server connection error. Please try again.';
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>

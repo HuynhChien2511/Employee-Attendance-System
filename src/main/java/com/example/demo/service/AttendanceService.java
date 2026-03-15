@@ -1,13 +1,54 @@
+/*
+ * FILE: AttendanceService.java
+ * PURPOSE: Business logic layer for employee attendance records.
+ *          Manages check-in/check-out operations and general attendance data access.
+ *          Works with AttendanceRecordRepository and delegates employee lookups
+ *          to EmployeeService.
+ *
+ * METHODS:
+ *  - getAllAttendanceRecords()
+ *      Returns every attendance record in the database (no filter).
+ *      Used by admin endpoints for the full attendance report view.
+ *
+ *  - getAttendanceByEmployee(employeeId)
+ *      Returns all attendance records for a single employee.
+ *      Called from EmployeeApiController and AttendanceController.
+ *
+ *  - checkIn(employeeId)
+ *      Creates a new AttendanceRecord with checkInTime = now() and status PRESENT.
+ *      Returns null if the employee ID is not found.
+ *      Called from the employee check-in endpoint (POST /api/employee/checkin).
+ *
+ *  - checkOut(recordId)
+ *      Finds an existing record by its ID, sets checkOutTime = now(), then calls
+ *      record.calculateHoursWorked() before saving. Returns null if not found.
+ *      Called from the employee check-out endpoint (POST /api/employee/checkout).
+ *
+ *  - saveAttendance(record)
+ *      General-purpose save: calculates hours worked if both timestamps are present,
+ *      then persists the record. Used by admin/manager manual edits and re-check-in
+ *      approvals.
+ *
+ * HOW TO MODIFY:
+ *  - To prevent double check-in: query for an existing open record (no checkOutTime)
+ *    for today before creating a new one inside checkIn().
+ *  - To change attendance status logic (e.g., auto-flag LATE): add time comparison
+ *    in checkIn() against the employee's assigned shift start time.
+ *  - To add attendance filtering by date range: add a new method that calls
+ *    AttendanceRecordRepository.findByEmployee_IdAndCheckInTimeBetween(...).
+ */
 package com.example.demo.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.AttendanceRecord;
 import com.example.demo.entity.Employee;
 import com.example.demo.repository.AttendanceRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AttendanceService {

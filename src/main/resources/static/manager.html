@@ -1,0 +1,476 @@
+<!--
+FILE: manager.html
+PURPOSE: Manager dashboard UI for team overview, team attendance, leave approvals,
+re-check-in approvals, monthly summaries, bonus/penalty actions, announcements,
+suggestion replies, and notification access.
+
+KEY CLIENT FUNCTIONS:
+- init(), populateMonthYear(), api(): page bootstrap and API wrapper.
+- loadStats(), loadTeam(), loadAttendance(), loadLeaves(), loadRecheckin(),
+  loadSummary(), loadBonus(), loadAnnouncements(), loadSuggestions(), showNotifications():
+  refresh each manager panel.
+- approveLeave(), rejectLeave(), approveReCheckin(), rejectReCheckin(), saveBonus(),
+  postAnnouncement(), sendReply(): manager write actions.
+- populateTeamSelects(), toggleAnnTarget(), openReply(), openModal(), closeModal(): UI helpers.
+
+HOW TO MODIFY:
+- When adding a new team-management feature, keep the UI section and its API calls aligned
+  with ManagerApiController.
+- Reuse the api() wrapper for all authenticated calls so session handling stays consistent.
+- This page keeps its CSS inline; update this file directly when changing manager-specific styling.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EAS – Manager Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins','Trebuchet MS','Segoe UI',sans-serif;background:#f4f7f2;display:flex;min-height:100vh}
+.sidebar{width:240px;background:linear-gradient(180deg,#115e59 0%,#0f766e 100%);color:#fff;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar .brand{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar .brand h2{font-size:16px;font-weight:700}
+.sidebar .brand p{font-size:11px;opacity:.7;margin-top:2px}
+.sidebar nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.1)}
+.nav-item.active{background:rgba(255,255,255,.15);border-left-color:#facc15}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.sidebar .user-info{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:12px}
+.sidebar .user-info .name{font-weight:600;margin-bottom:2px}
+.sidebar .user-info .role{opacity:.7}
+.logout-btn{display:block;margin:8px 20px 16px;padding:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;cursor:pointer;font-size:12px;text-align:center;transition:.15s}
+.logout-btn:hover{background:rgba(255,255,255,.2)}
+.main{flex:1;overflow:auto}
+.topbar{background:#fff;padding:16px 28px;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:18px;font-weight:700;color:#115e59}
+.notif-btn{position:relative;background:none;border:none;cursor:pointer;font-size:20px;padding:4px}
+.notif-badge{position:absolute;top:0;right:0;background:#f44336;color:#fff;font-size:9px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:24px 28px}
+.section{display:none}
+.section.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.stat-card .val{font-size:32px;font-weight:700;color:#115e59}
+.stat-card .lbl{font-size:12px;color:#888;margin-top:4px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-header h3{font-size:15px;font-weight:600;color:#333}
+table{width:100%;border-collapse:collapse}
+th{background:#f5f5f5;padding:10px 14px;text-align:left;font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px}
+td{padding:11px 14px;border-bottom:1px solid #f5f5f5;font-size:13px;color:#333}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:.15s}
+.btn-primary{background:#0f766e;color:#fff}
+.btn-primary:hover{background:#115e59}
+.btn-success{background:#0f766e;color:#fff}
+.btn-danger{background:#c62828;color:#fff}
+.btn-warning{background:#f57f17;color:#fff}
+.btn-outline{background:none;border:1px solid #0f766e;color:#0f766e}
+.btn-sm{padding:4px 10px;font-size:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
+.form-control{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.form-control:focus{outline:none;border-color:#0f766e}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:24px;width:500px;max-width:95vw;max-height:90vh;overflow:auto}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;color:#115e59}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-active{background:#e8f5e9;color:#2e7d32}
+.badge-inactive{background:#fce4ec;color:#c62828}
+.badge-pending{background:#fff8e1;color:#f57f17}
+.badge-approved{background:#e8f5e9;color:#2e7d32}
+.badge-rejected{background:#fce4ec;color:#c62828}
+.badge-bonus{background:#e8f5e9;color:#2e7d32}
+.badge-penalty{background:#fce4ec;color:#c62828}
+.filters{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand"><h2>🏢 EAS Manager</h2><p>Employee Attendance System</p></div>
+  <nav>
+    <div class="nav-item active" data-section="dashboard"><span class="icon">📊</span>Dashboard</div>
+    <div class="nav-item" data-section="team"><span class="icon">👥</span>My Team</div>
+    <div class="nav-item" data-section="attendance"><span class="icon">📅</span>Team Attendance</div>
+    <div class="nav-item" data-section="leaves"><span class="icon">📋</span>Leave Requests</div>
+    <div class="nav-item" data-section="recheckin"><span class="icon">🔁</span>Re-checkin Requests</div>
+    <div class="nav-item" data-section="summary"><span class="icon">📈</span>Monthly Summary</div>
+    <div class="nav-item" data-section="bonus"><span class="icon">💰</span>Bonus / Penalty</div>
+    <div class="nav-item" data-section="announcements"><span class="icon">📢</span>Announcements</div>
+    <div class="nav-item" data-section="suggestions"><span class="icon">💬</span>Suggestions Inbox</div>
+  </nav>
+  <div class="user-info"><div class="name" id="sidebarName">Manager</div><div class="role">Manager</div></div>
+  <button class="logout-btn" onclick="logout()">⬅ Sign Out</button>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Dashboard</h1>
+    <button class="notif-btn" onclick="showNotifications()">🔔<span class="notif-badge" id="notifCount" style="display:none">0</span></button>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="val" id="statTeam">–</div><div class="lbl">Team Members</div></div>
+        <div class="stat-card"><div class="val" id="statLeaves">–</div><div class="lbl">Pending Leaves</div></div>
+        <div class="stat-card"><div class="val" id="statRecheckin">–</div><div class="lbl">Pending Re-checkins</div></div>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div class="section" id="sec-team">
+      <div class="card">
+        <div class="card-header"><h3>My Team</h3></div>
+        <table><thead><tr><th>Code</th><th>Name</th><th>Department</th><th>Position</th><th>Status</th></tr></thead>
+        <tbody id="teamBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="section" id="sec-attendance">
+      <div class="filters">
+        <select class="form-control" id="attEmpSelect" style="width:220px"><option value="">Select Team Member…</option></select>
+        <input type="number" class="form-control" id="attDays" value="30" min="1" max="90" style="width:100px">
+        <button class="btn btn-primary" onclick="loadAttendance()">View</button>
+      </div>
+      <div class="card"><div class="card-header"><h3>Attendance Records</h3></div>
+        <table><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody id="attBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LEAVES -->
+    <div class="section" id="sec-leaves">
+      <div class="card">
+        <div class="card-header"><h3>Team Leave Requests</h3></div>
+        <table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="leaveBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- RECHECKIN -->
+    <div class="section" id="sec-recheckin">
+      <div class="card">
+        <div class="card-header"><h3>Team Re-checkin Requests</h3></div>
+        <table><thead><tr><th>Employee</th><th>Requested Date</th><th>Requested Time</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="recheckinBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="section" id="sec-summary">
+      <div class="filters">
+        <select class="form-control" id="sumEmpSelect" style="width:220px"><option value="">Select Team Member…</option></select>
+        <select class="form-control" id="sumMonth" style="width:130px"></select>
+        <select class="form-control" id="sumYear" style="width:100px"></select>
+        <button class="btn btn-primary" onclick="loadSummary()">Calculate</button>
+      </div>
+      <div id="summaryCard" style="display:none" class="card">
+        <div class="card-header"><h3>Monthly Summary</h3></div>
+        <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="summaryGrid"></div>
+      </div>
+    </div>
+
+    <!-- BONUS -->
+    <div class="section" id="sec-bonus">
+      <div class="card">
+        <div class="card-header"><h3>Team Bonus / Penalty</h3><button class="btn btn-primary" onclick="openModal('bonusModal')">+ Add Record</button></div>
+        <table><thead><tr><th>Employee</th><th>Type</th><th>Amount</th><th>Reason</th><th>Month/Year</th></tr></thead>
+        <tbody id="bonusBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="section" id="sec-announcements">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="card-header"><h3>📢 New Announcement</h3></div>
+          <div style="padding:20px">
+            <div class="form-group"><label>Title</label><input class="form-control" id="annTitle"></div>
+            <div class="form-group"><label>Target</label>
+              <select class="form-control" id="annTarget" onchange="toggleAnnTarget()">
+                <option value="ALL">All Employees</option>
+                <option value="DEPARTMENT">By Department</option>
+                <option value="EMPLOYEE">Specific Employee</option>
+              </select>
+            </div>
+            <div class="form-group" id="annTargetValueGroup" style="display:none">
+              <label id="annTargetValueLabel">Value</label>
+              <input class="form-control" id="annTargetValue">
+            </div>
+            <div class="form-group"><label>Content</label><textarea class="form-control" id="annContent" rows="4" style="resize:vertical"></textarea></div>
+            <button class="btn btn-primary" onclick="postAnnouncement()">Send</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Announcements</h3></div>
+          <div id="annList" style="padding:12px;max-height:400px;overflow:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="section" id="sec-suggestions">
+      <div class="card">
+        <div class="card-header"><h3>Suggestions Inbox</h3></div>
+        <div id="suggestionList" style="padding:12px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bonus Modal -->
+<div class="modal-overlay" id="bonusModal">
+  <div class="modal">
+    <h3>Add Bonus / Penalty</h3>
+    <div class="form-group"><label>Employee *</label><select class="form-control" id="bf_emp"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Type *</label><select class="form-control" id="bf_type"><option value="BONUS">Bonus</option><option value="PENALTY">Penalty</option></select></div>
+      <div class="form-group"><label>Amount (VND) *</label><input class="form-control" id="bf_amount" type="number"></div>
+    </div>
+    <div class="form-group"><label>Reason</label><input class="form-control" id="bf_reason"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Month *</label><select class="form-control" id="bf_month"></select></div>
+      <div class="form-group"><label>Year *</label><select class="form-control" id="bf_year"></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('bonusModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBonus()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reply Modal -->
+<div class="modal-overlay" id="replyModal">
+  <div class="modal">
+    <h3>Reply to Suggestion</h3>
+    <div id="suggestionDetail" style="background:#f5f5f5;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px"></div>
+    <div class="form-group"><label>Reply</label><textarea class="form-control" id="replyText" rows="4"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('replyModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="sendReply()">Send Reply</button>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="currentSuggestionId">
+
+<script>
+let team = [];
+
+async function init() {
+  const res = await fetch('/api/auth/me');
+  if(!res.ok){window.location.href='/login';return;}
+  const me = await res.json();
+  if(me.role!=='MANAGER'&&me.role!=='ADMIN'){window.location.href='/login';return;}
+  document.getElementById('sidebarName').textContent=me.firstName+' '+me.lastName;
+  loadStats();
+  populateMonthYear();
+  loadNotifCount();
+  setInterval(loadNotifCount,30000);
+}
+
+function populateMonthYear(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now=new Date();
+  ['sumMonth','bf_month'].forEach(id=>{const sel=document.getElementById(id);if(!sel)return;months.forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=m;if(i+1===now.getMonth()+1)o.selected=true;sel.appendChild(o)});});
+  ['sumYear','bf_year'].forEach(id=>{const sel=document.getElementById(id);if(!sel)return;for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;if(y===now.getFullYear())o.selected=true;sel.appendChild(o);}});
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelector('.nav-item.active')?.classList.remove('active');
+    item.classList.add('active');
+    const sec=item.dataset.section;
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+sec)?.classList.add('active');
+    document.getElementById('pageTitle').textContent=item.textContent.trim();
+    if(sec==='team')loadTeam();
+    else if(sec==='leaves')loadLeaves();
+    else if(sec==='recheckin')loadRecheckin();
+    else if(sec==='bonus')loadBonus();
+    else if(sec==='announcements')loadAnnouncements();
+    else if(sec==='suggestions')loadSuggestions();
+  });
+});
+
+async function api(url,method='GET',body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  return{ok:res.ok,status:res.status,data:await res.json().catch(()=>({}))};
+}
+
+async function loadStats(){
+  const r=await api('/api/manager/stats');if(!r.ok)return;
+  document.getElementById('statTeam').textContent=r.data.teamSize??'–';
+  document.getElementById('statLeaves').textContent=r.data.pendingLeaves??'–';
+  document.getElementById('statRecheckin').textContent=r.data.pendingReCheckins??'–';
+}
+
+async function loadTeam(){
+  const r=await api('/api/manager/team');if(!r.ok)return;
+  team=r.data;
+  populateTeamSelects();
+  document.getElementById('teamBody').innerHTML=team.map(e=>`
+    <tr>
+      <td>${e.employeeId||''}</td>
+      <td>${e.firstName} ${e.lastName}</td>
+      <td>${e.department||'–'}</td>
+      <td>${e.position||'–'}</td>
+      <td><span class="badge badge-${e.status==='ACTIVE'?'active':'inactive'}">${e.status}</span></td>
+    </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#999">No team members</td></tr>';
+}
+
+function populateTeamSelects(){
+  ['attEmpSelect','sumEmpSelect'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    sel.innerHTML='<option value="">Select Team Member…</option>'+team.map(e=>`<option value="${e.id}">${e.firstName} ${e.lastName} (${e.employeeId})</option>`).join('');
+  });
+  const bf=document.getElementById('bf_emp');if(bf)bf.innerHTML=team.map(e=>`<option value="${e.id}">${e.firstName} ${e.lastName}</option>`).join('');
+}
+
+async function loadAttendance(){
+  const empId=document.getElementById('attEmpSelect').value;if(!empId){alert('Select a team member');return;}
+  const days=document.getElementById('attDays').value||30;
+  const r=await api(`/api/manager/attendance/${empId}?days=${days}`);if(!r.ok)return;
+  document.getElementById('attBody').innerHTML=r.data.map(a=>`
+    <tr>
+      <td>${fmtDate(a.checkInTime)}</td>
+      <td>${fmtTime(a.checkInTime)}</td>
+      <td>${a.checkOutTime?fmtTime(a.checkOutTime):'–'}</td>
+      <td>${a.hoursWorked?a.hoursWorked.toFixed(1)+'h':'–'}</td>
+      <td><span class="badge badge-${statusClass(a.status)}">${a.status||'–'}</span></td>
+      <td>${a.notes||'–'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No records</td></tr>';
+}
+
+async function loadLeaves(){
+  const r=await api('/api/manager/leave-requests');if(!r.ok)return;
+  document.getElementById('leaveBody').innerHTML=r.data.map(l=>`
+    <tr>
+      <td>${l.employee?l.employee.firstName+' '+l.employee.lastName:'–'}</td>
+      <td>${l.leaveType}</td>
+      <td>${l.startDate}</td>
+      <td>${l.endDate}</td>
+      <td>${l.reason||'–'}</td>
+      <td><span class="badge badge-${l.status?.toLowerCase()}">${l.status}</span></td>
+      <td>${l.status==='PENDING'?`<button class="btn btn-sm btn-success" onclick="approveLeave(${l.id})">✓</button> <button class="btn btn-sm btn-danger" onclick="rejectLeave(${l.id})">✗</button>`:'–'}</td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:#999">No requests</td></tr>';
+}
+
+async function approveLeave(id){const r=await api(`/api/manager/leave-requests/${id}/approve`,'PUT');if(r.ok)loadLeaves();}
+async function rejectLeave(id){const r=await api(`/api/manager/leave-requests/${id}/reject`,'PUT');if(r.ok)loadLeaves();}
+
+async function loadRecheckin(){
+  const r=await api('/api/manager/recheckin-requests');if(!r.ok)return;
+  document.getElementById('recheckinBody').innerHTML=r.data.map(rc=>`
+    <tr>
+      <td>${rc.employee?rc.employee.firstName+' '+rc.employee.lastName:'–'}</td>
+      <td>${rc.requestedDate||'–'}</td>
+      <td>${rc.requestedCheckinTime||'–'}</td>
+      <td>${rc.reason||'–'}</td>
+      <td><span class="badge badge-${rc.status?.toLowerCase()}">${rc.status}</span></td>
+      <td>${rc.status==='PENDING'?`<button class="btn btn-sm btn-success" onclick="approveReCheckin(${rc.id})">✓</button> <button class="btn btn-sm btn-danger" onclick="rejectReCheckin(${rc.id})">✗</button>`:'–'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No requests</td></tr>';
+}
+
+async function approveReCheckin(id){const r=await api(`/api/manager/recheckin-requests/${id}/approve`,'PUT');if(r.ok)loadRecheckin();}
+async function rejectReCheckin(id){const r=await api(`/api/manager/recheckin-requests/${id}/reject`,'PUT');if(r.ok)loadRecheckin();}
+
+async function loadSummary(){
+  const empId=document.getElementById('sumEmpSelect').value;if(!empId){alert('Select a team member');return;}
+  const month=document.getElementById('sumMonth').value,year=document.getElementById('sumYear').value;
+  const r=await api(`/api/manager/monthly-summary/${empId}?month=${month}&year=${year}`);if(!r.ok){alert(r.data.error||'Failed');return;}
+  const d=r.data;
+  document.getElementById('summaryCard').style.display='block';
+  document.getElementById('summaryGrid').innerHTML=`
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#115e59">${d.presentDays}</div><div style="color:#888;font-size:13px">Present Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#f57f17">${d.absentDays}</div><div style="color:#888;font-size:13px">Absent Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#0f766e">${d.leaveDays}</div><div style="color:#888;font-size:13px">Leave Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#2e7d32">${fmt(d.totalBonus)}</div><div style="color:#888;font-size:13px">Total Bonus</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#c62828">${fmt(d.totalPenalty)}</div><div style="color:#888;font-size:13px">Total Penalty</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#0e7490">${fmt(d.netSalary)}</div><div style="color:#888;font-size:13px">Net Salary</div></div>`;
+}
+
+async function loadBonus(){
+  const r=await api('/api/manager/bonus-penalty');if(!r.ok)return;
+  document.getElementById('bonusBody').innerHTML=r.data.map(b=>`
+    <tr>
+      <td>${b.employee?b.employee.firstName+' '+b.employee.lastName:'–'}</td>
+      <td><span class="badge badge-${b.type==='BONUS'?'bonus':'penalty'}">${b.type}</span></td>
+      <td>${fmt(b.amount)}</td>
+      <td>${b.reason||'–'}</td>
+      <td>${b.month}/${b.year}</td>
+    </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#999">No records</td></tr>';
+}
+
+async function saveBonus(){
+  const body={employeeId:document.getElementById('bf_emp').value,type:document.getElementById('bf_type').value,amount:document.getElementById('bf_amount').value,reason:document.getElementById('bf_reason').value,month:document.getElementById('bf_month').value,year:document.getElementById('bf_year').value};
+  const r=await api('/api/manager/bonus-penalty','POST',body);
+  if(r.ok){closeModal('bonusModal');loadBonus();}else alert(r.data.error||'Failed');
+}
+
+function toggleAnnTarget(){const v=document.getElementById('annTarget').value;const grp=document.getElementById('annTargetValueGroup');const lbl=document.getElementById('annTargetValueLabel');grp.style.display=v==='ALL'?'none':'block';lbl.textContent=v==='DEPARTMENT'?'Department Name':'Employee ID';}
+
+async function postAnnouncement(){
+  const body={title:document.getElementById('annTitle').value,content:document.getElementById('annContent').value,targetType:document.getElementById('annTarget').value,targetValue:document.getElementById('annTargetValue').value||null};
+  if(!body.title||!body.content){alert('Title and content required');return;}
+  const r=await api('/api/manager/announcements','POST',body);
+  if(r.ok){alert('Sent!');document.getElementById('annTitle').value='';document.getElementById('annContent').value='';loadAnnouncements();}else alert(r.data.error||'Failed');
+}
+
+async function loadAnnouncements(){
+  const r=await api('/api/shared/announcements');if(!r.ok)return;
+  document.getElementById('annList').innerHTML=r.data.map(a=>`
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px">
+      <div style="font-weight:600;font-size:14px">${a.title}</div>
+      <div style="font-size:11px;color:#888;margin:4px 0">To: ${a.targetType} • ${fmtDate(a.createdAt)}</div>
+      <div style="font-size:13px;color:#555">${a.content}</div>
+    </div>`).join('')||'<p style="color:#999;font-size:13px">No announcements</p>';
+}
+
+async function loadSuggestions(){
+  const r=await api('/api/shared/suggestions/inbox');if(!r.ok)return;
+  document.getElementById('suggestionList').innerHTML=r.data.map(s=>`
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:14px;margin-bottom:10px;background:${s.isRead?'#fff':'#ecfeff'}">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div><span style="font-weight:600;font-size:14px">${s.subject||'No subject'}</span><span style="font-size:12px;color:#888;margin-left:8px">from ${s.sender?.username||'?'} • ${fmtDate(s.createdAt)}</span></div>
+        <button class="btn btn-sm btn-primary" onclick="openReply(${s.id},'${esc(s.subject)}','${esc(s.message)}')">Reply</button>
+      </div>
+      <div style="margin-top:8px;font-size:13px;color:#555">${s.message||''}</div>
+      ${s.reply?`<div style="margin-top:8px;padding:8px;background:#ccfbf1;border-radius:6px;font-size:12px;color:#0f766e"><strong>Reply:</strong> ${s.reply}</div>`:''}
+    </div>`).join('')||'<p style="color:#999">No suggestions</p>';
+}
+
+function openReply(id,subject,message){document.getElementById('currentSuggestionId').value=id;document.getElementById('suggestionDetail').innerHTML=`<strong>Subject:</strong> ${subject}<br><br>${message}`;document.getElementById('replyText').value='';openModal('replyModal');}
+async function sendReply(){const id=document.getElementById('currentSuggestionId').value;const r=await api(`/api/shared/suggestions/${id}/reply`,'PUT',{reply:document.getElementById('replyText').value});if(r.ok){closeModal('replyModal');loadSuggestions();}else alert('Failed');}
+
+async function loadNotifCount(){const r=await api('/api/shared/notifications/count');if(r.ok){const c=r.data.count;const el=document.getElementById('notifCount');if(c>0){el.textContent=c;el.style.display='flex';}else el.style.display='none';}}
+async function showNotifications(){const r=await api('/api/shared/notifications');if(!r.ok)return;alert(r.data.slice(0,10).map(n=>`• ${n.message}`).join('\n')||'No notifications');await api('/api/shared/notifications/read-all','PUT');loadNotifCount();}
+
+function fmt(n){if(n==null)return'–';return Number(n).toLocaleString('vi-VN')+'đ';}
+function fmtDate(dt){if(!dt)return'–';return new Date(dt).toLocaleDateString('en-CA');}
+function fmtTime(dt){if(!dt)return'–';return new Date(dt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+function statusClass(s){const m={PRESENT:'active',APPROVED:'active',LATE:'pending',ABSENT:'inactive',ON_LEAVE:'inactive',REJECTED:'inactive',PENDING:'pending',HALF_DAY:'pending'};return m[s]||'inactive';}
+function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+async function logout(){await api('/api/auth/logout','POST');window.location.href='/login';}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+window.addEventListener('load',async()=>{
+  await init();
+  const r=await api('/api/manager/team');if(r.ok){team=r.data;populateTeamSelects();}
+});
+</script>
+</body>
+</html>

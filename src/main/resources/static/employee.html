@@ -1,0 +1,753 @@
+<!--
+FILE: employee.html
+PURPOSE: Employee portal UI for personal dashboard, check-in/check-out, attendance history,
+monthly summary, leave requests, re-check-in requests, bonus/penalty history,
+announcements, suggestions, notifications, and the task board.
+
+KEY CLIENT FUNCTIONS:
+- init(), populateMonthYear(), api(): initial page load and authenticated API wrapper.
+- loadHomeData(), loadPersonalDashboard(), loadHomeNotifs(), loadTodayStatus(): home/dashboard logic.
+- handleCheckin(), loadAttendance(), loadSummary(), loadLeaves(), submitLeave(), cancelLeave(),
+  loadRecheckin(), submitRecheckin(), loadBonus(): employee self-service flows.
+- loadAnnouncements(), loadSuggestionRecipients(), sendSuggestion(), loadSentSuggestions(),
+  loadNotifCount(), goNotifications(), markAllRead(): shared communication features.
+- loadMyTasks(), openTaskDetail(), submitTask(), taskRowHTML(): task dashboard and submissions.
+
+HOW TO MODIFY:
+- Keep endpoint changes in sync with EmployeeApiController, SharedApiController, and TaskApiController.
+- If you add a new sidebar section, add its markup, loader, and the init()/navigation wiring together.
+- This file is intentionally self-contained, so update both the inline style and script blocks here
+  when changing employee UX behavior.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EAS – Employee Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins','Trebuchet MS','Segoe UI',sans-serif;background:#f4f7f2;display:flex;min-height:100vh}
+.sidebar{width:240px;background:linear-gradient(180deg,#115e59 0%,#0f766e 100%);color:#fff;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar .brand{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar .brand h2{font-size:16px;font-weight:700}
+.sidebar .brand p{font-size:11px;opacity:.7;margin-top:2px}
+.sidebar nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.1)}
+.nav-item.active{background:rgba(255,255,255,.15);border-left-color:#facc15}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.sidebar .user-info{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:12px}
+.sidebar .user-info .name{font-weight:600;margin-bottom:2px}
+.sidebar .user-info .role{opacity:.7}
+.logout-btn{display:block;margin:8px 20px 16px;padding:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;cursor:pointer;font-size:12px;text-align:center;transition:.15s}
+.logout-btn:hover{background:rgba(255,255,255,.2)}
+.main{flex:1;overflow:auto}
+.topbar{background:#fff;padding:16px 28px;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:18px;font-weight:700;color:#115e59}
+.notif-btn{position:relative;background:none;border:none;cursor:pointer;font-size:20px;padding:4px}
+.notif-badge{position:absolute;top:0;right:0;background:#f44336;color:#fff;font-size:9px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:24px 28px}
+.section{display:none}
+.section.active{display:block}
+/* Checkin card */
+.checkin-card{background:#fff;border-radius:16px;padding:40px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center;max-width:420px;margin:0 auto}
+.checkin-card h2{font-size:20px;margin-bottom:8px;color:#333}
+.checkin-card .status-text{font-size:14px;color:#888;margin-bottom:24px}
+.checkin-big-btn{width:160px;height:160px;border-radius:50%;border:none;font-size:20px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.checkin-big-btn.inactive{background:linear-gradient(135deg,#115e59,#0ea5a4);color:#fff;box-shadow:0 8px 24px rgba(15,118,110,.4)}
+.checkin-big-btn.inactive:hover{transform:scale(1.05)}
+.checkin-big-btn.active{background:linear-gradient(135deg,#c62828,#d32f2f);color:#fff;box-shadow:0 8px 24px rgba(198,40,40,.4)}
+.checkin-big-btn.active:hover{transform:scale(1.05)}
+.time-display{font-size:13px;color:#666;margin-top:16px}
+/* Cards */
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;margin-bottom:16px}
+.card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.card-header h3{font-size:15px;font-weight:600;color:#333}
+table{width:100%;border-collapse:collapse}
+th{background:#f5f5f5;padding:10px 14px;text-align:left;font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px}
+td{padding:11px 14px;border-bottom:1px solid #f5f5f5;font-size:13px;color:#333}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:.15s}
+.btn-primary{background:#0f766e;color:#fff}
+.btn-primary:hover{background:#115e59}
+.btn-danger{background:#c62828;color:#fff}
+.btn-outline{background:none;border:1px solid #0f766e;color:#0f766e}
+.btn-sm{padding:4px 10px;font-size:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
+.form-control{width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.form-control:focus{outline:none;border-color:#0f766e}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow:auto}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;color:#115e59}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f0}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-active,.badge-approved,.badge-present{background:#e8f5e9;color:#2e7d32}
+.badge-inactive,.badge-rejected,.badge-absent{background:#fce4ec;color:#c62828}
+.badge-pending,.badge-late{background:#fff8e1;color:#f57f17}
+.badge-bonus{background:#e8f5e9;color:#2e7d32}
+.badge-penalty{background:#fce4ec;color:#c62828}
+.filters{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.notif-item{padding:12px 16px;border-bottom:1px solid #f5f5f5;font-size:13px}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:#ecfeff;font-weight:500}
+.notif-item .time{font-size:11px;color:#999;margin-top:2px}
+/* ── Personal Dashboard ── */
+.personal-dashboard{margin-bottom:24px}
+.profile-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:28px 32px;display:flex;align-items:center;gap:28px;margin-bottom:20px}
+.avatar-wrapper{position:relative;flex-shrink:0;cursor:default}
+.avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#115e59,#0ea5e9);color:#fff;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;user-select:none;box-shadow:0 4px 14px rgba(15,118,110,.35)}
+.profile-tooltip{visibility:hidden;opacity:0;position:absolute;left:84px;top:0;background:#1e293b;color:#fff;border-radius:10px;padding:12px 16px;width:220px;font-size:12px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:opacity .2s;pointer-events:none}
+.profile-tooltip::before{content:'';position:absolute;left:-8px;top:20px;border:8px solid transparent;border-right-color:#1e293b;border-left:0}
+.avatar-wrapper:hover .profile-tooltip{visibility:visible;opacity:1}
+.tooltip-row{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px}
+.tooltip-row:last-child{margin-bottom:0}
+.tooltip-row .label{opacity:.7;white-space:nowrap}
+.tooltip-row .val{font-weight:600;text-align:right}
+.profile-details .profile-name{font-size:22px;font-weight:700;color:#115e59;line-height:1.2}
+.profile-details .profile-role-badge{display:inline-block;margin-top:5px;padding:3px 10px;border-radius:20px;background:#ccfbf1;color:#0f766e;font-size:12px;font-weight:600;letter-spacing:.4px}
+.profile-details .profile-dept{font-size:13px;color:#888;margin-top:5px}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dash-stat-card{background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,.07);padding:20px 22px;display:flex;flex-direction:column;gap:6px}
+.dash-stat-card .stat-icon{font-size:22px}
+.dash-stat-card .stat-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px}
+.dash-stat-card .stat-value{font-size:20px;font-weight:700;color:#115e59}
+.dash-stat-card.bonus .stat-value{color:#2e7d32}
+.dash-stat-card.penalty .stat-value{color:#c62828}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600}
+.status-pill.not-in{background:#f1f5f9;color:#64748b}
+.status-pill.checked-in{background:#dcfce7;color:#15803d}
+.status-pill.checked-out{background:#dbeafe;color:#1d4ed8}
+/* ── Task Board ── */
+.task-board-header{font-size:16px;font-weight:700;color:#115e59;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.task-board-section{margin-bottom:28px}
+.task-row{display:grid;grid-template-columns:80px 1fr 90px 80px 110px;gap:12px;align-items:center;padding:13px 16px;border-radius:10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:8px;cursor:pointer;transition:box-shadow .15s}
+.task-row:hover{box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.task-row .task-id{font-size:12px;color:#888;font-weight:600}
+.task-row .task-name{font-size:14px;font-weight:600;color:#1e293b}
+.task-row .task-members{font-size:12px;color:#555;text-align:center}
+.task-row .task-deadline{font-size:12px;color:#555}
+.badge-in-process{background:#fff8e1;color:#b45309}
+.badge-finished{background:#dcfce7;color:#15803d}
+.badge-missed{background:#fee2e2;color:#b91c1c}
+.task-empty{font-size:13px;color:#aaa;padding:12px 0}
+/* submission list */
+.sub-item{background:#f8fafc;border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:13px}
+.sub-item .sub-meta{font-size:11px;color:#888;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand"><h2>🏢 EAS Portal</h2><p>Employee Attendance System</p></div>
+  <nav>
+    <div class="nav-item active" data-section="home"><span class="icon">🏠</span>Home</div>
+    <div class="nav-item" data-section="checkin"><span class="icon">⏱</span>Check In / Out</div>
+    <div class="nav-item" data-section="attendance"><span class="icon">📅</span>My Attendance</div>
+    <div class="nav-item" data-section="summary"><span class="icon">📈</span>Monthly Summary</div>
+    <div class="nav-item" data-section="leaves"><span class="icon">📋</span>Leave Request</div>
+    <div class="nav-item" data-section="recheckin"><span class="icon">🔁</span>Re-checkin Request</div>
+    <div class="nav-item" data-section="bonus"><span class="icon">💰</span>Bonus / Penalty</div>
+    <div class="nav-item" data-section="announcements"><span class="icon">📢</span>Announcements</div>
+    <div class="nav-item" data-section="suggestions"><span class="icon">💬</span>Suggestion Box</div>
+    <div class="nav-item" data-section="tasks"><span class="icon">📌</span>My Tasks</div>
+  </nav>
+  <div class="user-info"><div class="name" id="sidebarName">Employee</div><div class="role" id="sidebarDept">–</div></div>
+  <button class="logout-btn" onclick="logout()">⬅ Sign Out</button>
+</div>
+
+<div class="main">
+  <div class="topbar"><h1 id="pageTitle">Home</h1><button class="notif-btn" onclick="goNotifications()">🔔<span class="notif-badge" id="notifCount" style="display:none">0</span></button></div>
+  <div class="content">
+
+    <!-- HOME / PERSONAL DASHBOARD -->
+    <div class="section active" id="sec-home">
+      <div class="personal-dashboard">
+        <!-- Profile card -->
+        <div class="profile-card">
+          <div class="avatar-wrapper" id="avatarWrapper">
+            <div class="avatar" id="avatarInitials">–</div>
+            <div class="profile-tooltip" id="profileTooltip">
+              <div class="tooltip-row"><span class="label">Role</span><span class="val" id="ttRole">–</span></div>
+              <div class="tooltip-row"><span class="label">Base Salary</span><span class="val" id="ttSalary">–</span></div>
+              <div class="tooltip-row"><span class="label">Working Days (Month)</span><span class="val" id="ttWorkDays">–</span></div>
+            </div>
+          </div>
+          <div class="profile-details">
+            <div class="profile-name" id="dashName">–</div>
+            <span class="profile-role-badge" id="dashRoleBadge">–</span>
+            <div class="profile-dept" id="dashDept">–</div>
+          </div>
+        </div>
+        <!-- Stat cards -->
+        <div class="dash-stats">
+          <div class="dash-stat-card">
+            <div class="stat-icon">⏱</div>
+            <div class="stat-label">Today's Status</div>
+            <div class="stat-value" id="dashStatus">–</div>
+          </div>
+          <div class="dash-stat-card bonus">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Monthly Bonus</div>
+            <div class="stat-value" id="dashBonus">–</div>
+          </div>
+          <div class="dash-stat-card penalty">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-label">Monthly Penalty</div>
+            <div class="stat-value" id="dashPenalty">–</div>
+          </div>
+        </div>
+      </div>
+      <!-- Notifications -->
+      <div class="card">
+        <div class="card-header"><h3>🔔 Recent Notifications</h3><button class="btn btn-sm btn-outline" onclick="markAllRead()">Mark all read</button></div>
+        <div id="homeNotifs" style="max-height:220px;overflow:auto"><p style="padding:16px;color:#888;font-size:13px">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- CHECKIN -->
+    <div class="section" id="sec-checkin">
+      <div class="checkin-card">
+        <h2>Check In / Check Out</h2>
+        <p class="status-text" id="checkinStatusText">Loading today's status…</p>
+        <button class="checkin-big-btn inactive" id="checkinBtn" onclick="handleCheckin()">
+          <span id="checkinBtnIcon">🟢</span>
+          <span id="checkinBtnLabel">CHECK IN</span>
+        </button>
+        <div class="time-display" id="checkinTimeDisplay"></div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="section" id="sec-attendance">
+      <div class="filters">
+        <input type="number" class="form-control" id="attDays" value="30" min="1" max="90" style="width:110px" placeholder="Days">
+        <button class="btn btn-primary" onclick="loadAttendance()">View</button>
+      </div>
+      <div class="card"><div class="card-header"><h3>My Attendance (Last <span id="attDaysLabel">30</span> days)</h3></div>
+        <table><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody id="attBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="section" id="sec-summary">
+      <div class="filters">
+        <select class="form-control" id="sumMonth" style="width:130px"></select>
+        <select class="form-control" id="sumYear" style="width:100px"></select>
+        <button class="btn btn-primary" onclick="loadSummary()">Calculate</button>
+      </div>
+      <div id="summaryCard" style="display:none" class="card">
+        <div class="card-header"><h3>Monthly Summary</h3></div>
+        <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="summaryGrid"></div>
+      </div>
+    </div>
+
+    <!-- LEAVES -->
+    <div class="section" id="sec-leaves">
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:20px">
+        <div class="card">
+          <div class="card-header"><h3>New Leave Request</h3></div>
+          <div style="padding:20px">
+            <div class="form-group"><label>Leave Type *</label>
+              <select class="form-control" id="lf_type"><option value="ANNUAL">Annual</option><option value="SICK">Sick</option><option value="MATERNITY">Maternity</option><option value="UNPAID">Unpaid</option><option value="OTHER">Other</option></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Start Date *</label><input class="form-control" id="lf_start" type="date"></div>
+              <div class="form-group"><label>End Date *</label><input class="form-control" id="lf_end" type="date"></div>
+            </div>
+            <div class="form-group"><label>Reason</label><textarea class="form-control" id="lf_reason" rows="3" style="resize:vertical"></textarea></div>
+            <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>My Leave Requests</h3></div>
+          <table><thead><tr><th>Type</th><th>From</th><th>To</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="leaveBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECHECKIN -->
+    <div class="section" id="sec-recheckin">
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:20px">
+        <div class="card">
+          <div class="card-header"><h3>New Re-checkin Request</h3></div>
+          <div style="padding:20px">
+            <div class="form-group"><label>Date *</label><input class="form-control" id="rcf_date" type="date"></div>
+            <div class="form-group"><label>Requested Check-in Time *</label><input class="form-control" id="rcf_time" type="time"></div>
+            <div class="form-group"><label>Reason</label><textarea class="form-control" id="rcf_reason" rows="3" style="resize:vertical"></textarea></div>
+            <button class="btn btn-primary" onclick="submitRecheckin()">Submit Request</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>My Re-checkin Requests</h3></div>
+          <table><thead><tr><th>Date</th><th>Req. Time</th><th>Reason</th><th>Status</th></tr></thead>
+          <tbody id="recheckinBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BONUS -->
+    <div class="section" id="sec-bonus">
+      <div class="card">
+        <div class="card-header"><h3>My Bonus / Penalty Records</h3></div>
+        <table><thead><tr><th>Type</th><th>Amount</th><th>Reason</th><th>Month/Year</th></tr></thead>
+        <tbody id="bonusBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="section" id="sec-announcements">
+      <div class="card">
+        <div class="card-header"><h3>📢 Announcements</h3></div>
+        <div id="annList" style="padding:16px"></div>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="section" id="sec-suggestions">
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:20px">
+        <div class="card">
+          <div class="card-header"><h3>💬 Send Suggestion</h3></div>
+          <div style="padding:20px">
+            <div class="form-group"><label>Send To (Manager) *</label><select class="form-control" id="sf_recipient"></select></div>
+            <div class="form-group"><label>Subject</label><input class="form-control" id="sf_subject" placeholder="Subject…"></div>
+            <div class="form-group"><label>Message *</label><textarea class="form-control" id="sf_message" rows="4" style="resize:vertical"></textarea></div>
+            <button class="btn btn-primary" onclick="sendSuggestion()">Send</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Sent Suggestions</h3></div>
+          <div id="sentList" style="padding:12px;max-height:400px;overflow:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="section" id="sec-tasks">
+      <div class="task-board-section">
+        <div class="task-board-header">📋 Current Tasks</div>
+        <div class="task-row" style="background:#f1f5f9;cursor:default;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">
+          <div>ID</div><div>Task Name</div><div style="text-align:center">Members</div><div>Status</div><div>Deadline</div>
+        </div>
+        <div id="currentTasksList"><p class="task-empty">Loading…</p></div>
+      </div>
+      <div class="task-board-section">
+        <div class="task-board-header">✅ Finished / Past Deadline</div>
+        <div class="task-row" style="background:#f1f5f9;cursor:default;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">
+          <div>ID</div><div>Task Name</div><div style="text-align:center">Members</div><div>Status</div><div>Deadline</div>
+        </div>
+        <div id="finishedTasksList"><p class="task-empty">Loading…</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Task Detail Modal -->
+<div class="modal-overlay" id="taskDetailModal">
+  <div class="modal" style="width:600px;max-width:96vw">
+    <h3 id="taskModalTitle">Task Detail</h3>
+    <div id="taskModalMeta" style="font-size:12px;color:#888;margin-bottom:6px"></div>
+    <div id="taskModalDesc" style="font-size:13px;color:#444;margin-bottom:14px;white-space:pre-wrap"></div>
+    <div id="taskModalAttach" style="margin-bottom:14px"></div>
+    <!-- Members -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Members</div>
+      <div id="taskModalMembers" style="font-size:13px;color:#333"></div>
+    </div>
+    <!-- Submissions -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Submissions</div>
+      <div id="taskModalSubs" style="max-height:160px;overflow:auto"></div>
+    </div>
+    <!-- Submit form -->
+    <div style="border-top:1px solid #f0f0f0;padding-top:16px">
+      <div style="font-size:13px;font-weight:600;color:#115e59;margin-bottom:10px">📤 Submit Your Work</div>
+      <input type="hidden" id="submitTaskId">
+      <div class="form-group"><label>Text Submission</label><textarea class="form-control" id="submitText" rows="3" placeholder="Describe your work…" style="resize:vertical"></textarea></div>
+      <div class="form-group"><label>Attach File (optional)</label><input type="file" class="form-control" id="submitFile"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('taskDetailModal')">Close</button>
+      <button class="btn btn-primary" onclick="submitTask()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Leave Edit Modal -->
+<div class="modal-overlay" id="leaveEditModal">
+  <div class="modal">
+    <h3>Cancel Leave Request</h3>
+    <p style="font-size:13px;color:#555;margin-bottom:16px">Are you sure you want to cancel this leave request?</p>
+    <input type="hidden" id="leaveEditId">
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('leaveEditModal')">No, Keep It</button>
+      <button class="btn btn-danger" onclick="cancelLeave()">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let meData = null;
+
+async function init() {
+  const res = await fetch('/api/auth/me');
+  if(!res.ok){window.location.href='/login';return;}
+  meData = await res.json();
+  document.getElementById('sidebarName').textContent = meData.firstName+' '+meData.lastName;
+  document.getElementById('sidebarDept').textContent = meData.department||meData.role;
+  loadHomeData();
+  populateMonthYear();
+  loadNotifCount();
+  setInterval(loadNotifCount,30000);
+  loadSuggestionRecipients();
+}
+
+function populateMonthYear(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now=new Date();
+  const sel=document.getElementById('sumMonth');
+  months.forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=m;if(i+1===now.getMonth()+1)o.selected=true;sel.appendChild(o);});
+  const sely=document.getElementById('sumYear');
+  for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;if(y===now.getFullYear())o.selected=true;sely.appendChild(o);}
+  // Set default dates in leave/recheckin forms
+  const today=now.toISOString().split('T')[0];
+  document.getElementById('lf_start').value=today;
+  document.getElementById('lf_end').value=today;
+  document.getElementById('rcf_date').value=today;
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelector('.nav-item.active')?.classList.remove('active');
+    item.classList.add('active');
+    const sec=item.dataset.section;
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+sec)?.classList.add('active');
+    document.getElementById('pageTitle').textContent=item.textContent.trim();
+    if(sec==='checkin')loadTodayStatus();
+    else if(sec==='attendance')loadAttendance();
+    else if(sec==='leaves')loadLeaves();
+    else if(sec==='recheckin')loadRecheckin();
+    else if(sec==='bonus')loadBonus();
+    else if(sec==='announcements')loadAnnouncements();
+    else if(sec==='suggestions'){loadSentSuggestions();loadSuggestionRecipients();}
+    else if(sec==='tasks')loadMyTasks();
+  });
+});
+
+async function api(url,method='GET',body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  return{ok:res.ok,status:res.status,data:await res.json().catch(()=>({}))};
+}
+
+// ── Home / Personal Dashboard ────────────────────────────────────
+async function loadHomeData(){
+  await loadPersonalDashboard();
+  loadHomeNotifs();
+}
+
+async function loadPersonalDashboard(){
+  const r=await api('/api/employee/dashboard');
+  if(!r.ok) return;
+  const d=r.data;
+  // Avatar initials
+  const initials=((d.firstName||'')[0]||(meData&&meData.firstName?meData.firstName[0]:'?')).toUpperCase();
+  document.getElementById('avatarInitials').textContent=initials;
+  // Name & role
+  document.getElementById('dashName').textContent=(d.firstName||'')+' '+(d.lastName||'');
+  document.getElementById('dashRoleBadge').textContent=d.role||'EMPLOYEE';
+  document.getElementById('dashDept').textContent=[d.position,d.department].filter(Boolean).join(' · ')||'–';
+  // Tooltip
+  document.getElementById('ttRole').textContent=d.role||'–';
+  document.getElementById('ttSalary').textContent=fmt(d.baseSalary);
+  document.getElementById('ttWorkDays').textContent=(d.workingDaysThisMonth||0)+' days';
+  // Today status pill
+  const stateMap={NOT_CHECKED_IN:{label:'Not Checked In',cls:'not-in'},CHECKED_IN:{label:'Checked In ✓',cls:'checked-in'},CHECKED_OUT:{label:'Checked Out ✓',cls:'checked-out'}};
+  const s=stateMap[d.todayState]||stateMap['NOT_CHECKED_IN'];
+  document.getElementById('dashStatus').innerHTML=`<span class="status-pill ${s.cls}">${s.label}</span>${d.checkInTime?'<div style="font-size:11px;color:#888;margin-top:4px">In: '+fmtTime(d.checkInTime)+(d.checkOutTime?' · Out: '+fmtTime(d.checkOutTime):'')+'</div>':''}`;
+  // Bonus / penalty
+  document.getElementById('dashBonus').textContent=fmt(d.monthlyBonus);
+  document.getElementById('dashPenalty').textContent=fmt(d.monthlyPenalty);
+}
+
+async function loadHomeNotifs(){
+  const r=await api('/api/shared/notifications');
+  const unread=r.ok?r.data.filter(n=>!n.isRead).slice(0,5):[];
+  document.getElementById('homeNotifs').innerHTML=unread.length?unread.map(n=>`<div class="notif-item unread"><div>${n.message}</div><div class="time">${fmtDate(n.createdAt)}</div></div>`).join(''):'<p style="padding:16px;color:#888;font-size:13px">No new notifications</p>';
+}
+
+// ── Check In / Out ────────────────────────────────────────────────
+let currentRecordId=null, isCheckedIn=false;
+
+async function loadTodayStatus(){
+  const r=await api('/api/employee/today-status');
+  if(!r.ok)return;
+  const d=r.data;
+  isCheckedIn=d.checkedIn&&!d.checkOutTime;
+  currentRecordId=d.recordId||null;
+  const btn=document.getElementById('checkinBtn');
+  const icon=document.getElementById('checkinBtnIcon');
+  const label=document.getElementById('checkinBtnLabel');
+  const statusText=document.getElementById('checkinStatusText');
+  const timeDisplay=document.getElementById('checkinTimeDisplay');
+  if(d.checkedIn&&d.checkOutTime){
+    btn.className='checkin-big-btn';btn.style.background='#e0e0e0';btn.style.cursor='default';
+    icon.textContent='✅';label.textContent='DONE';btn.onclick=()=>alert('You have already completed today\'s attendance.');
+    statusText.textContent=`Completed today: ${fmtTime(d.checkInTime)} – ${fmtTime(d.checkOutTime)}`;
+    timeDisplay.textContent=`Hours: ${d.hoursWorked?d.hoursWorked.toFixed(1)+'h':'–'}`;
+  } else if(isCheckedIn){
+    btn.className='checkin-big-btn active';
+    icon.textContent='🔴';label.textContent='CHECK OUT';
+    statusText.textContent=`Checked in at ${fmtTime(d.checkInTime)}`;
+    timeDisplay.textContent='Click to check out';
+    btn.onclick=handleCheckin;
+  } else {
+    btn.className='checkin-big-btn inactive';
+    icon.textContent='🟢';label.textContent='CHECK IN';
+    statusText.textContent='You have not checked in today.';
+    timeDisplay.textContent='';
+    btn.onclick=handleCheckin;
+  }
+}
+
+async function handleCheckin(){
+  if(isCheckedIn){
+    const r=await api('/api/employee/checkout','POST');
+    if(r.ok){alert('Checked out at '+fmtTime(r.data.checkOutTime));loadTodayStatus();}
+    else alert(r.data.error||'Check-out failed');
+  } else {
+    const r=await api('/api/employee/checkin','POST');
+    if(r.ok){alert('Checked in at '+fmtTime(r.data.checkInTime));loadTodayStatus();}
+    else alert(r.data.error||'Check-in failed');
+  }
+}
+
+// ── Attendance ────────────────────────────────────────────────────
+async function loadAttendance(){
+  const days=document.getElementById('attDays').value||30;
+  document.getElementById('attDaysLabel').textContent=days;
+  const r=await api(`/api/employee/attendance?days=${days}`);if(!r.ok)return;
+  document.getElementById('attBody').innerHTML=r.data.map(a=>`
+    <tr>
+      <td>${fmtDate(a.checkInTime)}</td>
+      <td>${fmtTime(a.checkInTime)}</td>
+      <td>${a.checkOutTime?fmtTime(a.checkOutTime):'–'}</td>
+      <td>${a.hoursWorked?a.hoursWorked.toFixed(1)+'h':'–'}</td>
+      <td><span class="badge badge-${statusClass(a.status)}">${a.status||'–'}</span></td>
+      <td>${a.notes||'–'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No records</td></tr>';
+}
+
+// ── Summary ───────────────────────────────────────────────────────
+async function loadSummary(){
+  const month=document.getElementById('sumMonth').value,year=document.getElementById('sumYear').value;
+  const r=await api(`/api/employee/monthly-summary?month=${month}&year=${year}`);
+  if(!r.ok){alert(r.data.error||'Failed');return;}
+  const d=r.data;
+  document.getElementById('summaryCard').style.display='block';
+  document.getElementById('summaryGrid').innerHTML=`
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#115e59">${d.presentDays}</div><div style="color:#888;font-size:13px">Present Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#f57f17">${d.absentDays}</div><div style="color:#888;font-size:13px">Absent Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#0f766e">${d.leaveDays}</div><div style="color:#888;font-size:13px">Leave Days</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#2e7d32">${fmt(d.totalBonus)}</div><div style="color:#888;font-size:13px">Total Bonus</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#c62828">${fmt(d.totalPenalty)}</div><div style="color:#888;font-size:13px">Total Penalty</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#0e7490">${fmt(d.netSalary)}</div><div style="color:#888;font-size:13px">Net Salary</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#37474f">${d.totalHours?Number(d.totalHours).toFixed(1)+'h':'–'}</div><div style="color:#888;font-size:13px">Total Hours</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700;color:#115e59">${fmt(d.baseSalary)}</div><div style="color:#888;font-size:13px">Base Salary</div></div>
+  `;
+}
+
+// ── Leaves ────────────────────────────────────────────────────────
+async function loadLeaves(){
+  const r=await api('/api/employee/leave-requests');if(!r.ok)return;
+  document.getElementById('leaveBody').innerHTML=r.data.map(l=>`
+    <tr>
+      <td>${l.leaveType}</td>
+      <td>${l.startDate}</td>
+      <td>${l.endDate}</td>
+      <td>${l.reason||'–'}</td>
+      <td><span class="badge badge-${l.status?.toLowerCase()}">${l.status}</span></td>
+      <td>${l.status==='PENDING'?`<button class="btn btn-sm btn-danger" onclick="confirmCancelLeave(${l.id})">Cancel</button>`:'–'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No leave requests</td></tr>';
+}
+
+async function submitLeave(){
+  const body={leaveType:document.getElementById('lf_type').value,startDate:document.getElementById('lf_start').value,endDate:document.getElementById('lf_end').value,reason:document.getElementById('lf_reason').value};
+  if(!body.startDate||!body.endDate){alert('Please fill in dates');return;}
+  const r=await api('/api/employee/leave-requests','POST',body);
+  if(r.ok){alert('Leave request submitted!');document.getElementById('lf_reason').value='';loadLeaves();}else alert(r.data.error||'Failed');
+}
+
+function confirmCancelLeave(id){document.getElementById('leaveEditId').value=id;openModal('leaveEditModal');}
+async function cancelLeave(){const id=document.getElementById('leaveEditId').value;const r=await api(`/api/employee/leave-requests/${id}`,'DELETE');if(r.ok){closeModal('leaveEditModal');loadLeaves();}else alert(r.data.error||'Failed');}
+
+// ── Re-checkin ────────────────────────────────────────────────────
+async function loadRecheckin(){
+  const r=await api('/api/employee/recheckin-requests');if(!r.ok)return;
+  document.getElementById('recheckinBody').innerHTML=r.data.map(rc=>`
+    <tr>
+      <td>${rc.requestedDate}</td>
+      <td>${rc.requestedCheckinTime||'–'}</td>
+      <td>${rc.reason||'–'}</td>
+      <td><span class="badge badge-${rc.status?.toLowerCase()}">${rc.status}</span></td>
+    </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:#999">No requests</td></tr>';
+}
+
+async function submitRecheckin(){
+  const body={requestedDate:document.getElementById('rcf_date').value,requestedCheckinTime:document.getElementById('rcf_time').value,reason:document.getElementById('rcf_reason').value};
+  if(!body.requestedDate){alert('Please select a date');return;}
+  const r=await api('/api/employee/recheckin-requests','POST',body);
+  if(r.ok){alert('Request submitted!');document.getElementById('rcf_reason').value='';loadRecheckin();}else alert(r.data.error||'Failed');
+}
+
+// ── Bonus ─────────────────────────────────────────────────────────
+async function loadBonus(){
+  const r=await api('/api/employee/bonus-penalty');if(!r.ok)return;
+  document.getElementById('bonusBody').innerHTML=r.data.map(b=>`
+    <tr>
+      <td><span class="badge badge-${b.type==='BONUS'?'bonus':'penalty'}">${b.type}</span></td>
+      <td>${fmt(b.amount)}</td>
+      <td>${b.reason||'–'}</td>
+      <td>${b.month}/${b.year}</td>
+    </tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:#999">No records</td></tr>';
+}
+
+// ── Announcements ─────────────────────────────────────────────────
+async function loadAnnouncements(){
+  const r=await api('/api/shared/announcements');if(!r.ok)return;
+  document.getElementById('annList').innerHTML=r.data.map(a=>`
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:14px;margin-bottom:10px">
+      <div style="font-weight:600;font-size:14px">${a.title}</div>
+      <div style="font-size:11px;color:#888;margin:4px 0">${fmtDate(a.createdAt)} • from ${a.sender?.username||'Admin'}</div>
+      <div style="font-size:13px;color:#555">${a.content}</div>
+    </div>`).join('')||'<p style="color:#999">No announcements</p>';
+}
+
+// ── Suggestions ───────────────────────────────────────────────────
+async function loadSuggestionRecipients(){
+  const r=await api('/api/shared/managers');if(!r.ok)return;
+  const sel=document.getElementById('sf_recipient');
+  sel.innerHTML=r.data.map(u=>`<option value="${u.id}">${u.employeeName||u.username} (${u.role})</option>`).join('')||'<option value="">No managers found</option>';
+}
+
+async function sendSuggestion(){
+  const body={receiverId:document.getElementById('sf_recipient').value,subject:document.getElementById('sf_subject').value,message:document.getElementById('sf_message').value};
+  if(!body.receiverId||!body.message){alert('Please fill in recipient and message');return;}
+  const r=await api('/api/shared/suggestions','POST',body);
+  if(r.ok){alert('Suggestion sent!');document.getElementById('sf_subject').value='';document.getElementById('sf_message').value='';loadSentSuggestions();}else alert(r.data.error||'Failed');
+}
+
+async function loadSentSuggestions(){
+  const r=await api('/api/shared/suggestions/sent');if(!r.ok)return;
+  document.getElementById('sentList').innerHTML=r.data.map(s=>`
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px">
+      <div style="font-weight:600;font-size:14px">${s.subject||'No subject'}</div>
+      <div style="font-size:11px;color:#888;margin:4px 0">To: ${s.receiver?.username||'?'} • ${fmtDate(s.createdAt)}</div>
+      <div style="font-size:13px;color:#555">${s.message||''}</div>
+      ${s.reply?`<div style="margin-top:8px;padding:8px;background:#ccfbf1;border-radius:6px;font-size:12px;color:#0f766e"><strong>Reply:</strong> ${s.reply}</div>`:'<div style="font-size:11px;color:#aaa;margin-top:6px">Awaiting reply…</div>'}
+    </div>`).join('')||'<p style="color:#999">No sent suggestions</p>';
+}
+
+// ── Notifications ─────────────────────────────────────────────────
+async function loadNotifCount(){const r=await api('/api/shared/notifications/count');if(r.ok){const c=r.data.count;const el=document.getElementById('notifCount');if(c>0){el.textContent=c;el.style.display='flex';}else el.style.display='none';}}
+
+function goNotifications(){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-home')?.classList.add('active');
+  document.getElementById('pageTitle').textContent='Home';
+  document.querySelector('[data-section="home"]')?.classList.add('active');
+  loadHomeNotifs();markAllRead();
+}
+
+async function markAllRead(){const r=await api('/api/shared/notifications/read-all','PUT');if(r.ok)loadNotifCount();}
+
+// ── Task Dashboard ────────────────────────────────────────────────
+async function loadMyTasks(){
+  const r=await api('/api/employee/tasks');
+  if(!r.ok){document.getElementById('currentTasksList').innerHTML='<p class="task-empty">Failed to load tasks</p>';return;}
+  const current=r.data.filter(t=>t.status==='IN_PROCESS');
+  const finished=r.data.filter(t=>t.status!=='IN_PROCESS');
+  document.getElementById('currentTasksList').innerHTML=current.length
+    ?current.map(taskRowHTML).join('')
+    :'<p class="task-empty">No active tasks</p>';
+  document.getElementById('finishedTasksList').innerHTML=finished.length
+    ?finished.map(taskRowHTML).join('')
+    :'<p class="task-empty">No finished or past-deadline tasks</p>';
+}
+
+function taskRowHTML(t){
+  const statusMap={IN_PROCESS:'<span class="badge badge-in-process">In Process</span>',FINISHED:'<span class="badge badge-finished">Finished</span>',MISSED_DEADLINE:'<span class="badge badge-missed">Missed</span>'};
+  return `<div class="task-row" onclick="openTaskDetail(${t.id})">
+    <div class="task-id">#${t.id}</div>
+    <div class="task-name">${escHtml(t.title)}</div>
+    <div class="task-members">👥 ${t.memberCount}</div>
+    <div>${statusMap[t.status]||t.status}</div>
+    <div class="task-deadline">${t.deadline||'–'}</div>
+  </div>`;
+}
+
+async function openTaskDetail(id){
+  const r=await api('/api/employee/tasks/'+id);
+  if(!r.ok){alert('Failed to load task details');return;}
+  const t=r.data;
+  document.getElementById('submitTaskId').value=id;
+  document.getElementById('taskModalTitle').textContent='#'+t.id+' '+escHtml(t.title);
+  const statusLabel={IN_PROCESS:'In Process',FINISHED:'Finished',MISSED_DEADLINE:'Missed Deadline'}[t.status]||t.status;
+  document.getElementById('taskModalMeta').innerHTML=`Deadline: <strong>${t.deadline||'–'}</strong> &nbsp;|&nbsp; Status: <strong>${statusLabel}</strong> &nbsp;|&nbsp; Created by: <strong>${escHtml(t.createdBy||'–')}</strong>`;
+  document.getElementById('taskModalDesc').textContent=t.description||'No description.';
+  // Attached file
+  document.getElementById('taskModalAttach').innerHTML=t.attachedFileName
+    ?`<a href="/api/files/download?path=${encodeURIComponent(t.attachedFilePath)}" style="font-size:13px;color:#0f766e">📎 ${escHtml(t.attachedFileName)}</a>`
+    :'';
+  // Members
+  document.getElementById('taskModalMembers').innerHTML=(t.members||[]).map(m=>`<span style="background:#f1f5f9;border-radius:6px;padding:3px 10px;margin:2px;display:inline-block;font-size:13px">${escHtml(m.employeeName||'–')}</span>`).join('')||'–';
+  // Submissions
+  document.getElementById('taskModalSubs').innerHTML=(t.submissions||[]).length
+    ?(t.submissions||[]).map(s=>`<div class="sub-item"><div class="sub-meta">${escHtml(s.employeeName||'–')} · ${fmtDate(s.submittedAt)}</div><div>${escHtml(s.textContent||'')}</div>${s.fileName?`<a href="/api/files/download?path=${encodeURIComponent(s.filePath)}" style="font-size:12px;color:#0f766e">📎 ${escHtml(s.fileName)}</a>`:''}</div>`).join('')
+    :'<p style="font-size:13px;color:#aaa">No submissions yet</p>';
+  // Clear submit form
+  document.getElementById('submitText').value='';
+  if(document.getElementById('submitFile')) document.getElementById('submitFile').value='';
+  openModal('taskDetailModal');
+}
+
+async function submitTask(){
+  const id=document.getElementById('submitTaskId').value;
+  const text=document.getElementById('submitText').value;
+  const fileInput=document.getElementById('submitFile');
+  const formData=new FormData();
+  if(text) formData.append('textContent',text);
+  if(fileInput&&fileInput.files[0]) formData.append('file',fileInput.files[0]);
+  if(!text&&(!fileInput||!fileInput.files[0])){alert('Please add text or attach a file');return;}
+  const res=await fetch('/api/employee/tasks/'+id+'/submit',{method:'POST',body:formData});
+  const data=await res.json().catch(()=>({}));
+  if(res.ok){alert('Submitted successfully!');openTaskDetail(id);loadMyTasks();}
+  else alert(data.error||'Submission failed');
+}
+
+function escHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function fmt(n){if(n==null)return'–';return Number(n).toLocaleString('vi-VN')+'đ';}
+function fmtDate(dt){if(!dt)return'–';return new Date(dt).toLocaleDateString('en-CA');}
+function fmtTime(dt){if(!dt)return'–';return new Date(dt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+function statusClass(s){const m={PRESENT:'active',APPROVED:'approved',LATE:'late',ABSENT:'absent',ON_LEAVE:'inactive',REJECTED:'rejected',PENDING:'pending',HALF_DAY:'pending'};return m[s]||'inactive';}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+async function logout(){await api('/api/auth/logout','POST');window.location.href='/login';}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

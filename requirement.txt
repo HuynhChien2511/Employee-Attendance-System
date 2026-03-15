@@ -1,0 +1,27 @@
+ Viết Database, code UI:
+Chia user thành 3 role: employee, manager, admin
+Mỗi role UI riêng
+Code Authenticate:
+Sign in (admin tạo account user)
+Login (employee)
+Check in - Check out
+
+Code request functions:
+Request xin nghỉ
+Request xin check in lại -> check in function
+
+Code Announcement và suggestion box(hòm thư góp ý):
+Admin có thể announce tới tất cả employee; hoặc tới 1 phòng ban mà 1 manager quản lý; hoặc tới cụ thể từng employee
+Manager chỉ có thể announce tới các employee mà mình quản lý
+Suggestion box: Tất cả các user đều có 1 suggestion box, gửi tới thẳng cho admin hoặc manager của mình
+
+Code view system (user: employee, manager):
+View attendance process: View quá trình check in trong 30 ngày.
+View bonus/ penalty: Nên có 1 bảng danh sách các bonus/ penalty. 
+View monthly attendance summary: 1 bảng tổng kết sau 30 ngày, bao gồm số ngày công, số ngày nghỉ, thưởng/ phạt 
+-> Tổng tiền nhận được trong tháng.
+Nên có thông báo khi nhận bonus hoặc penalty
+View system (admin):
+Admin có thể view attendance process của từng user
+Admin có thể xem monthly summary của từng user 
+
