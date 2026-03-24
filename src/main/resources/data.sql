@@ -1,3 +1,5 @@
+USE employee_attendance;
+
 INSERT INTO employees (id, first_name, last_name, email, employee_id, phone, department, position, hire_date, status) VALUES
 (1, 'John', 'Doe', 'john.doe@company.com', 'EMP001', '555-0101', 'Engineering', 'Software Engineer', '2023-01-15', 'ACTIVE'),
 (2, 'Jane', 'Smith', 'jane.smith@company.com', 'EMP002', '555-0102', 'Human Resources', 'HR Manager', '2022-06-01', 'ACTIVE'),
