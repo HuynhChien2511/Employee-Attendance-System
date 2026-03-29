@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS employee_attendance;
+USE employee_attendance;
+
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS leave_requests;
 DROP TABLE IF EXISTS shift_assignments;
@@ -36,7 +39,7 @@ CREATE TABLE attendance_records (
     employee_id BIGINT NOT NULL,
     check_in_time DATETIME(6) NOT NULL,
     check_out_time DATETIME(6),
-    hours_worked DOUBLE,
+    hours_worked DOUBLE,    
     status VARCHAR(30),
     notes VARCHAR(255),
     PRIMARY KEY (id),
