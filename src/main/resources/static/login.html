@@ -63,7 +63,22 @@ HOW TO MODIFY:
           </span>
         </div>
     </div>
+    <div style="text-align:right;margin-top:8px;margin-bottom:2px;">
+      <a href="#" id="forgotPwdLink" style="font-size:13px;color:#0ea5a4;text-decoration:none;">Forgot password?</a>
+    </div>
     <button class="btn" type="submit">Sign In</button>
+    </form>
+    <!-- Forgot Password Modal -->
+    <div id="forgotPwdModal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:32px 28px 22px 28px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);width:320px;max-width:90vw;position:relative;">
+        <button id="closeModalBtn" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;color:#888;cursor:pointer;">&times;</button>
+        <h2 style="font-size:18px;color:#115e59;margin-bottom:12px;">Forgot Password</h2>
+        <div style="font-size:13px;color:#444;margin-bottom:14px;">Enter your email to receive password reset instructions.</div>
+        <input id="forgotEmail" type="email" placeholder="Your email address" style="width:100%;padding:10px 12px;border:2px solid #d8e2dc;border-radius:7px;font-size:14px;margin-bottom:14px;">
+        <button id="sendResetBtn" style="width:100%;padding:10px;background:linear-gradient(135deg,#115e59,#0ea5a4);color:#fff;border:none;border-radius:7px;font-size:15px;font-weight:600;cursor:pointer;">Send Reset Link</button>
+        <div id="resetMsg" style="font-size:13px;color:#0f766e;margin-top:10px;display:none;"></div>
+      </div>
+    </div>
     <div class="loading" id="loading">⏳ Signing in…</div>
   </form>
   <div class="hint">
@@ -74,6 +89,35 @@ HOW TO MODIFY:
   </div>
 </div>
 <script>
+// Forgot password modal logic
+const forgotLink = document.getElementById('forgotPwdLink');
+const forgotModal = document.getElementById('forgotPwdModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const sendResetBtn = document.getElementById('sendResetBtn');
+const resetMsg = document.getElementById('resetMsg');
+const forgotEmail = document.getElementById('forgotEmail');
+
+forgotLink.addEventListener('click', function(e) {
+  e.preventDefault();
+  forgotModal.style.display = 'flex';
+  resetMsg.style.display = 'none';
+  forgotEmail.value = '';
+});
+closeModalBtn.addEventListener('click', function() {
+  forgotModal.style.display = 'none';
+});
+sendResetBtn.addEventListener('click', function() {
+  // Demo: chỉ hiển thị thông báo, chưa gửi mail thật
+  if (forgotEmail.value.trim() === '') {
+    resetMsg.textContent = 'Please enter your email.';
+    resetMsg.style.color = '#c62828';
+    resetMsg.style.display = 'block';
+    return;
+  }
+  resetMsg.textContent = 'If this email exists, a reset link will be sent.';
+  resetMsg.style.color = '#0f766e';
+  resetMsg.style.display = 'block';
+});
 async function doLogin(e) {
   e.preventDefault();
   const err = document.getElementById('errMsg');
