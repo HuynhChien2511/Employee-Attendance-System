@@ -55,7 +55,13 @@ HOW TO MODIFY:
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+        <div style="position:relative;">
+          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required style="padding-right:38px;">
+          <span id="togglePassword" style="position:absolute;top:50%;right:12px;transform:translateY(-50%);cursor:pointer;user-select:none;">
+            <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="display:block;"><path stroke="#888" stroke-width="2" d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.5" stroke="#888" stroke-width="2"/></svg>
+            <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="display:none;"><path stroke="#888" stroke-width="2" d="M3 3l18 18M1.5 12S5 5.5 12 5.5c2.1 0 4.01.5 5.66 1.22M22.5 12S19 18.5 12 18.5c-2.1 0-4.01-.5-5.66-1.22"/><circle cx="12" cy="12" r="3.5" stroke="#888" stroke-width="2"/></svg>
+          </span>
+        </div>
     </div>
     <button class="btn" type="submit">Sign In</button>
     <div class="loading" id="loading">⏳ Signing in…</div>
@@ -101,8 +107,26 @@ async function doLogin(e) {
   } finally {
     btn.disabled = false;
     loading.style.display = 'none';
-  }
+  } 
 }
+</script>
+<script>
+// Toggle password visibility with eye icon
+const pwdInput = document.getElementById('password');
+const togglePwd = document.getElementById('togglePassword');
+const eyeOpen = document.getElementById('eyeOpen');
+const eyeClosed = document.getElementById('eyeClosed');
+togglePwd.addEventListener('click', function() {
+  if (pwdInput.type === 'password') {
+    pwdInput.type = 'text';
+    eyeOpen.style.display = 'none';
+    eyeClosed.style.display = 'block';
+  } else {
+    pwdInput.type = 'password';
+    eyeOpen.style.display = 'block';
+    eyeClosed.style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
