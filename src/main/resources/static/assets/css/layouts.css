@@ -1,0 +1,29 @@
+.sidebar {
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  max-width: 1400px;
+}
+
+@media (max-width: 1080px) {
+  .sidebar {
+    width: 210px !important;
+  }
+}
+
+@media (max-width: 860px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100% !important;
+  }
+}

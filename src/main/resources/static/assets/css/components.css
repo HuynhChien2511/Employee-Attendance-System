@@ -1,0 +1,59 @@
+.btn {
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary,
+.btn-success {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+  color: #fff;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #b91c1c, var(--danger-600));
+  color: #fff;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #b45309, var(--warning-600));
+  color: #fff;
+}
+
+.btn-outline {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.form-control {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+}
