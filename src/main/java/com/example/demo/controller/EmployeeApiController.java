@@ -212,6 +212,7 @@ public class EmployeeApiController {
         if (emp == null) return noEmployee();
 
         // Check for duplicate check-in today
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
         List<AttendanceRecord> todayRecords = attendanceRepo
@@ -220,11 +221,28 @@ public class EmployeeApiController {
             return ResponseEntity.badRequest().body(Map.of("error", "Already checked in. Please check out first."));
         }
 
+        // Auto-checkout logic: Nếu đã check in trước đó 1 tiếng và bây giờ sau 18h
+        attendanceRepo.findTopByEmployee_IdAndCheckOutTimeIsNullOrderByCheckInTimeDesc(emp.getId())
+            .ifPresent(record -> {
+                LocalDateTime checkInTime = record.getCheckInTime();
+                LocalDateTime autoCheckoutTime = now.withHour(18).withMinute(0).withSecond(0).withNano(0);
+                if (checkInTime != null && now.isAfter(autoCheckoutTime)
+                    && java.time.Duration.between(checkInTime, autoCheckoutTime).toHours() >= 1
+                    && record.getCheckOutTime() == null) {
+                    record.setCheckOutTime(autoCheckoutTime);
+                    record.calculateHoursWorked();
+                    if (record.getHoursWorked() != null && record.getHoursWorked() < 4.0) {
+                        record.setStatus(AttendanceRecord.AttendanceStatus.HALF_DAY);
+                    }
+                    attendanceRepo.save(record);
+                }
+            });
+
         AttendanceRecord record = new AttendanceRecord();
         record.setEmployee(emp);
-        record.setCheckInTime(LocalDateTime.now());
+        record.setCheckInTime(now);
         // Mark as LATE if after 9:00 AM
-        if (LocalDateTime.now().getHour() >= 9) {
+        if (now.getHour() >= 9) {
             record.setStatus(AttendanceRecord.AttendanceStatus.LATE);
         } else {
             record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
