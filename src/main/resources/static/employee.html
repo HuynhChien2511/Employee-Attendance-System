@@ -68,11 +68,22 @@ body{font-family:'Poppins','Trebuchet MS','Segoe UI',sans-serif;background:#f4f7
 .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;margin-bottom:16px}
 .card-header{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
 .card-header h3{font-size:15px;font-weight:600;color:#333}
-table{width:100%;border-collapse:collapse}
-th{background:#f5f5f5;padding:10px 14px;text-align:left;font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px}
-td{padding:11px 14px;border-bottom:1px solid #f5f5f5;font-size:13px;color:#333}
+table{width:100%;border-collapse:separate;border-spacing:0 2px;border-radius:12px;overflow:hidden}
+th{background:#f5f5f5;padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0;z-index:2}
+td{padding:11px 14px;border-bottom:1px solid #f5f5f5;font-size:13px;color:#333;text-align:center;vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafa}
+tr:hover td{background:#f0fdfa}
+.att-status-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:16px;font-size:13px;font-weight:600}
+.att-status-late{background:#fee2e2;color:#b91c1c}
+.att-status-present{background:#dcfce7;color:#15803d}
+.att-status-half{background:#fef9c3;color:#b45309}
+.att-status-absent{background:#f1f5f9;color:#64748b}
+.att-status-icon{font-size:15px;vertical-align:middle}
+.att-notes-empty{color:#bbb;font-style:italic}
+@media (max-width: 900px) {
+  .card-header h3 {font-size:13px;}
+  th, td {font-size:11px;padding:7px 6px;}
+}
 .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:.15s}
 .btn-primary{background:#0f766e;color:#fff}
 .btn-primary:hover{background:#115e59}
@@ -229,11 +240,12 @@ tr:hover td{background:#fafafa}
     <!-- ATTENDANCE -->
     <div class="section" id="sec-attendance">
       <div class="filters">
+        <span style="font-size:13px;color:#666;margin-right:8px">Select number of days to view attendance history:</span>
         <input type="number" class="form-control" id="attDays" value="30" min="1" max="90" style="width:110px" placeholder="Days">
         <button class="btn btn-primary" onclick="loadAttendance()">View</button>
       </div>
       <div class="card"><div class="card-header"><h3>My Attendance (Last <span id="attDaysLabel">30</span> days)</h3></div>
-        <table><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Notes</th></tr></thead>
+        <table id="attTable"><thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th id="attNotesHeader">Notes</th></tr></thead>
         <tbody id="attBody"></tbody></table>
       </div>
     </div>
@@ -537,19 +549,72 @@ async function handleCheckin(){
 }
 
 // ── Attendance ────────────────────────────────────────────────────
-async function loadAttendance(){
-  const days=document.getElementById('attDays').value||30;
-  document.getElementById('attDaysLabel').textContent=days;
-  const r=await api(`/api/employee/attendance?days=${days}`);if(!r.ok)return;
-  document.getElementById('attBody').innerHTML=r.data.map(a=>`
-    <tr>
-      <td>${fmtDate(a.checkInTime)}</td>
-      <td>${fmtTime(a.checkInTime)}</td>
-      <td>${a.checkOutTime?fmtTime(a.checkOutTime):'–'}</td>
-      <td>${a.hoursWorked?a.hoursWorked.toFixed(1)+'h':'–'}</td>
-      <td><span class="badge badge-${statusClass(a.status)}">${a.status||'–'}</span></td>
-      <td>${a.notes||'–'}</td>
-    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No records</td></tr>';
+// Attendance status mapping for color/icon
+const attStatusMap = {
+  LATE: { label: 'Late', cls: 'att-status-late', icon: '⏰' },
+  PRESENT: { label: 'Present', cls: 'att-status-present', icon: '✅' },
+  HALF_DAY: { label: 'Half Day', cls: 'att-status-half', icon: '🕒' },
+  ABSENT: { label: 'Absent', cls: 'att-status-absent', icon: '❌' },
+};
+async function loadAttendance() {
+  const days = parseInt(document.getElementById('attDays').value) || 30;
+  document.getElementById('attDaysLabel').textContent = days;
+  const r = await api('/api/employee/attendance?days=' + days);
+  if (!r.ok) return;
+  const data = r.data || [];
+  const attBody = document.getElementById('attBody');
+  attBody.innerHTML = '';
+  let notesAllEmpty = true;
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    // Date
+    const tdDate = document.createElement('td');
+    tdDate.textContent = row.date || (row.checkInTime ? fmtDate(row.checkInTime) : '-');
+    tr.appendChild(tdDate);
+    // Check In
+    const tdIn = document.createElement('td');
+    tdIn.textContent = row.checkInTime ? fmtTime(row.checkInTime) : '-';
+    tr.appendChild(tdIn);
+    // Check Out
+    const tdOut = document.createElement('td');
+    tdOut.textContent = row.checkOutTime ? fmtTime(row.checkOutTime) : '-';
+    tr.appendChild(tdOut);
+    // Hours
+    const tdHours = document.createElement('td');
+    tdHours.textContent = row.hoursWorked ? row.hoursWorked.toFixed(1) : '-';
+    tr.appendChild(tdHours);
+    // Status
+    const tdStatus = document.createElement('td');
+    let statusHtml = '-';
+    if (row.status && attStatusMap[row.status]) {
+      const s = attStatusMap[row.status];
+      statusHtml = `<span class=\"att-status-pill ${s.cls}\"><span class=\"att-status-icon\">${s.icon}</span> ${s.label}</span>`;
+    }
+    tdStatus.innerHTML = statusHtml;
+    tr.appendChild(tdStatus);
+    // Notes
+    const tdNotes = document.createElement('td');
+    if (row.notes && row.notes.trim() && row.notes !== '-') {
+      tdNotes.textContent = row.notes;
+      notesAllEmpty = false;
+    } else {
+      tdNotes.textContent = '—';
+      tdNotes.className = 'att-notes-empty';
+    }
+    tr.appendChild(tdNotes);
+    attBody.appendChild(tr);
+  });
+  // Hide Notes column if all empty
+  document.getElementById('attNotesHeader').style.display = notesAllEmpty ? 'none' : '';
+  Array.from(attBody.querySelectorAll('tr')).forEach(tr => {
+    if (notesAllEmpty) tr.lastChild.style.display = 'none';
+    else tr.lastChild.style.display = '';
+  });
+  // No records
+  if (data.length === 0) {
+    attBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">No records</td></tr>';
+    document.getElementById('attNotesHeader').style.display = '';
+  }
 }
 
 // ── Summary ───────────────────────────────────────────────────────
