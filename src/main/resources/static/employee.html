@@ -509,10 +509,10 @@ async function loadTodayStatus(){
     icon.textContent='✅';label.textContent='DONE';btn.onclick=()=>alert('You have already completed today\'s attendance.');
     statusText.textContent=`Completed today: ${fmtTime(d.checkInTime)} – ${fmtTime(d.checkOutTime)}`;
     timeDisplay.textContent=`Hours: ${d.hoursWorked?d.hoursWorked.toFixed(1)+'h':'–'}`;
-  } else if(isCheckedIn){
+  } else if(!isCheckedIn){
     btn.className='checkin-big-btn active';
     icon.textContent='🔴';label.textContent='CHECK OUT';
-    statusText.textContent=`Checked in at ${fmtTime(d.checkInTime)}`;
+    statusText.textContent='You have already checked in today.';
     timeDisplay.textContent='Click to check out';
     btn.onclick=handleCheckin;
   } else {
