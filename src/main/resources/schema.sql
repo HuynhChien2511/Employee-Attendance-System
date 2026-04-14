@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS employee_attendance;
 USE employee_attendance;
 
+DROP TABLE IF EXISTS bonus_penalty;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS leave_requests;
 DROP TABLE IF EXISTS shift_assignments;
@@ -19,6 +20,7 @@ CREATE TABLE employees (
     position VARCHAR(100),
     hire_date DATE,
     status VARCHAR(30),
+    base_salary DECIMAL(15,2) NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uk_employees_email (email),
     UNIQUE KEY uk_employees_employee_id (employee_id)
@@ -88,4 +90,22 @@ CREATE TABLE users (
     UNIQUE KEY uk_users_employee_id (employee_id),
     CONSTRAINT chk_users_password_len CHECK (CHAR_LENGTH(password) >= 8),
     CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE bonus_penalty (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    employee_id BIGINT NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    reason VARCHAR(255),
+    effective_date DATE,
+    month INT,
+    year INT,
+    created_by BIGINT,
+    created_at DATETIME(6),
+    PRIMARY KEY (id),
+    KEY idx_bonus_penalty_employee (employee_id),
+    KEY idx_bonus_penalty_created_by (created_by),
+    CONSTRAINT fk_bonus_penalty_employee FOREIGN KEY (employee_id) REFERENCES employees (id),
+    CONSTRAINT fk_bonus_penalty_created_by FOREIGN KEY (created_by) REFERENCES users (id)
 ) ENGINE=InnoDB;

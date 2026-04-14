@@ -1,16 +1,16 @@
 USE employee_attendance;
 
-INSERT INTO employees (id, first_name, last_name, email, employee_id, phone, department, position, hire_date, status) VALUES
-(1, 'John', 'Doe', 'john.doe@company.com', 'EMP001', '555-0101', 'Engineering', 'Software Engineer', '2023-01-15', 'ACTIVE'),
-(2, 'Jane', 'Smith', 'jane.smith@company.com', 'EMP002', '555-0102', 'Human Resources', 'HR Manager', '2022-06-01', 'ACTIVE'),
-(3, 'Mike', 'Johnson', 'mike.johnson@company.com', 'EMP003', '555-0103', 'Sales', 'Sales Executive', '2023-03-20', 'ACTIVE'),
-(4, 'Emily', 'Brown', 'emily.brown@company.com', 'EMP004', '555-0104', 'Finance', 'Accountant', '2021-11-10', 'ACTIVE'),
-(5, 'David', 'Wilson', 'david.wilson@company.com', 'EMP005', '555-0105', 'Engineering', 'Backend Developer', '2024-02-12', 'ACTIVE'),
-(6, 'Sophia', 'Taylor', 'sophia.taylor@company.com', 'EMP006', '555-0106', 'Marketing', 'Marketing Specialist', '2020-08-18', 'ON_LEAVE'),
-(7, 'James', 'Anderson', 'james.anderson@company.com', 'EMP007', '555-0107', 'Operations', 'Operations Lead', '2019-05-05', 'ACTIVE'),
-(8, 'Olivia', 'Thomas', 'olivia.thomas@company.com', 'EMP008', '555-0108', 'Engineering', 'QA Engineer', '2024-01-08', 'ACTIVE'),
-(9, 'Liam', 'Martinez', 'liam.martinez@company.com', 'EMP009', '555-0109', 'Support', 'Support Agent', '2023-09-14', 'INACTIVE'),
-(10, 'Ava', 'Garcia', 'ava.garcia@company.com', 'EMP010', '555-0110', 'Product', 'Product Owner', '2022-12-01', 'ACTIVE');
+INSERT INTO employees (id, first_name, last_name, email, employee_id, phone, department, position, hire_date, status, base_salary) VALUES
+(1, 'John', 'Doe', 'john.doe@company.com', 'EMP001', '555-0101', 'Engineering', 'Software Engineer', '2023-01-15', 'ACTIVE', 15000000),
+(2, 'Jane', 'Smith', 'jane.smith@company.com', 'EMP002', '555-0102', 'Human Resources', 'HR Manager', '2022-06-01', 'ACTIVE', 22000000),
+(3, 'Mike', 'Johnson', 'mike.johnson@company.com', 'EMP003', '555-0103', 'Sales', 'Sales Executive', '2023-03-20', 'ACTIVE', 14000000),
+(4, 'Emily', 'Brown', 'emily.brown@company.com', 'EMP004', '555-0104', 'Finance', 'Accountant', '2021-11-10', 'ACTIVE', 18000000),
+(5, 'David', 'Wilson', 'david.wilson@company.com', 'EMP005', '555-0105', 'Engineering', 'Backend Developer', '2024-02-12', 'ACTIVE', 16500000),
+(6, 'Sophia', 'Taylor', 'sophia.taylor@company.com', 'EMP006', '555-0106', 'Marketing', 'Marketing Specialist', '2020-08-18', 'ON_LEAVE', 15500000),
+(7, 'James', 'Anderson', 'james.anderson@company.com', 'EMP007', '555-0107', 'Operations', 'Operations Lead', '2019-05-05', 'ACTIVE', 21000000),
+(8, 'Olivia', 'Thomas', 'olivia.thomas@company.com', 'EMP008', '555-0108', 'Engineering', 'QA Engineer', '2024-01-08', 'ACTIVE', 13500000),
+(9, 'Liam', 'Martinez', 'liam.martinez@company.com', 'EMP009', '555-0109', 'Support', 'Support Agent', '2023-09-14', 'INACTIVE', 12000000),
+(10, 'Ava', 'Garcia', 'ava.garcia@company.com', 'EMP010', '555-0110', 'Product', 'Product Owner', '2022-12-01', 'ACTIVE', 25000000);
 
 INSERT INTO shifts (id, shift_name, start_time, end_time, description, is_active) VALUES
 (1, 'Morning Shift A', '08:00:00', '16:00:00', 'Standard morning shift', 1),
@@ -34,7 +34,13 @@ INSERT INTO attendance_records (id, employee_id, check_in_time, check_out_time, 
 (7, 7, '2026-03-10 07:58:00', '2026-03-10 16:05:00', 8.12, 'PRESENT', 'On-time'),
 (8, 8, '2026-03-10 08:50:00', '2026-03-10 17:00:00', 8.17, 'LATE', 'Late by 50 minutes'),
 (9, 9, '2026-03-10 00:00:00', NULL, NULL, 'ABSENT', 'No show'),
-(10, 10, '2026-03-10 08:00:00', '2026-03-10 16:00:00', 8.00, 'PRESENT', 'Perfect shift');
+(10, 10, '2026-03-10 08:00:00', '2026-03-10 16:00:00', 8.00, 'PRESENT', 'Perfect shift'),
+(11, 1, '2026-04-01 08:00:00', '2026-04-01 16:05:00', 8.08, 'PRESENT', 'April kickoff'),
+(12, 1, '2026-04-02 08:12:00', '2026-04-02 16:00:00', 7.80, 'LATE', 'Traffic delay'),
+(13, 1, '2026-04-03 08:00:00', '2026-04-03 12:00:00', 4.00, 'HALF_DAY', 'Doctor appointment'),
+(14, 2, '2026-04-01 09:00:00', '2026-04-01 17:15:00', 8.25, 'PRESENT', 'Normal day'),
+(15, 2, '2026-04-02 00:00:00', NULL, NULL, 'ON_LEAVE', 'Approved leave'),
+(16, 2, '2026-04-03 00:00:00', NULL, NULL, 'ABSENT', 'No show');
 
 INSERT INTO shift_assignments (id, employee_id, shift_id, assignment_date, notes) VALUES
 (1, 1, 1, '2026-03-11', 'Default assignment'),
@@ -71,3 +77,8 @@ INSERT INTO users (id, username, password, role, employee_id, is_active) VALUES
 (8, 'james.anderson', 'Manager@123', 'MANAGER', 7, 1),
 (9, 'olivia.thomas', 'Employee@123', 'EMPLOYEE', 8, 1),
 (10, 'ava.garcia', 'Employee@123', 'EMPLOYEE', 10, 1);
+
+INSERT INTO bonus_penalty (id, employee_id, type, amount, reason, effective_date, month, year, created_by, created_at) VALUES
+(1, 1, 'BONUS', 2000000.00, 'Outstanding April delivery', '2026-04-01', 4, 2026, 1, '2026-04-02 09:00:00'),
+(2, 2, 'PENALTY', 500000.00, 'Late monthly report', '2026-04-01', 4, 2026, 1, '2026-04-02 09:15:00'),
+(3, 3, 'BONUS', 1000000.00, 'Sales target met', '2026-04-01', 4, 2026, 1, '2026-04-05 10:00:00');
