@@ -77,10 +77,10 @@ public class AttendanceController {
         return record != null ? ResponseEntity.ok(record) : ResponseEntity.badRequest().build();
     }
     
-    @PutMapping("/checkout/{recordId}")
-    public ResponseEntity<AttendanceRecord> checkOut(@PathVariable Long recordId) {
-        AttendanceRecord record = attendanceService.checkOut(recordId);
-        return record != null ? ResponseEntity.ok(record) : ResponseEntity.badRequest().build();
+    @PostMapping("/checkout/{employeeId}")
+    public ResponseEntity<AttendanceRecord> checkOut(@PathVariable Long employeeId) {
+        AttendanceRecord record = attendanceService.checkOutByEmployee(employeeId);
+        return record != null ? ResponseEntity.ok(record) : ResponseEntity.badRequest().body("No active check-in found for this employee.");
     }
     
     @PostMapping

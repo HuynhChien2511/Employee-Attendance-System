@@ -71,6 +71,12 @@ public class AttendanceService {
     public AttendanceRecord checkIn(Long employeeId) {
         Optional<Employee> employee = employeeService.getEmployeeById(employeeId);
         if (employee.isPresent()) {
+            // Kiểm tra đã check-in chưa checkout trong ngày chưa
+            Optional<AttendanceRecord> openRecord = attendanceRepository.findTopByEmployee_IdAndCheckOutTimeIsNullOrderByCheckInTimeDesc(employeeId);
+            if (openRecord.isPresent()) {
+                // Đã check-in mà chưa check-out
+                return null;
+            }
             AttendanceRecord record = new AttendanceRecord();
             record.setEmployee(employee.get());
             record.setCheckInTime(LocalDateTime.now());
@@ -80,10 +86,13 @@ public class AttendanceService {
         return null;
     }
     
-    public AttendanceRecord checkOut(Long recordId) {
-        Optional<AttendanceRecord> record = attendanceRepository.findById(recordId);
-        if (record.isPresent()) {
-            AttendanceRecord attendance = record.get();
+    // Không dùng nữa, thay bằng checkOutByEmployee
+    // public AttendanceRecord checkOut(Long recordId) { ... }
+
+    public AttendanceRecord checkOutByEmployee(Long employeeId) {
+        Optional<AttendanceRecord> openRecord = attendanceRepository.findTopByEmployee_IdAndCheckOutTimeIsNullOrderByCheckInTimeDesc(employeeId);
+        if (openRecord.isPresent()) {
+            AttendanceRecord attendance = openRecord.get();
             attendance.setCheckOutTime(LocalDateTime.now());
             attendance.calculateHoursWorked();
             return attendanceRepository.save(attendance);

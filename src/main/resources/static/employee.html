@@ -509,25 +509,31 @@ async function loadTodayStatus(){
   const r=await api('/api/employee/today-status');
   if(!r.ok)return;
   const d=r.data;
-  isCheckedIn=d.checkedIn&&!d.checkOutTime;
-  currentRecordId=d.recordId||null;
   const btn=document.getElementById('checkinBtn');
   const icon=document.getElementById('checkinBtnIcon');
   const label=document.getElementById('checkinBtnLabel');
   const statusText=document.getElementById('checkinStatusText');
   const timeDisplay=document.getElementById('checkinTimeDisplay');
-  if(d.checkedIn&&d.checkOutTime){
+  // Đã check in và đã check out
+  if(d.state === 'CHECKED_OUT'){
+    isCheckedIn = false;
     btn.className='checkin-big-btn';btn.style.background='#e0e0e0';btn.style.cursor='default';
     icon.textContent='✅';label.textContent='DONE';btn.onclick=()=>alert('You have already completed today\'s attendance.');
     statusText.textContent=`Completed today: ${fmtTime(d.checkInTime)} – ${fmtTime(d.checkOutTime)}`;
     timeDisplay.textContent=`Hours: ${d.hoursWorked?d.hoursWorked.toFixed(1)+'h':'–'}`;
-  } else if(!isCheckedIn){
+  }
+  // Đã check in, chưa check out
+  else if(d.state === 'CHECKED_IN'){
+    isCheckedIn = true;
     btn.className='checkin-big-btn active';
     icon.textContent='🔴';label.textContent='CHECK OUT';
     statusText.textContent='You have already checked in today.';
     timeDisplay.textContent='Click to check out';
     btn.onclick=handleCheckin;
-  } else {
+  }
+  // Chưa check in
+  else {
+    isCheckedIn = false;
     btn.className='checkin-big-btn inactive';
     icon.textContent='🟢';label.textContent='CHECK IN';
     statusText.textContent='You have not checked in today.';
