@@ -93,6 +93,14 @@ tr:hover td{background:#fafafa}
 .badge-bonus{background:#e8f5e9;color:#2e7d32}
 .badge-penalty{background:#fce4ec;color:#c62828}
 .filters{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.checkin-card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center;max-width:420px;margin:0 auto}
+.checkin-card h2{font-size:20px;margin-bottom:8px;color:#333}
+.checkin-card .status-text{font-size:14px;color:#888;margin-bottom:24px}
+.checkin-big-btn{width:160px;height:160px;border-radius:50%;border:none;font-size:20px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.checkin-big-btn.inactive{background:linear-gradient(135deg,#115e59,#0ea5a4);color:#fff;box-shadow:0 8px 24px rgba(15,118,110,.4)}
+.checkin-big-btn.active{background:linear-gradient(135deg,#c62828,#d32f2f);color:#fff;box-shadow:0 8px 24px rgba(198,40,40,.4)}
+.checkin-big-btn:hover{transform:scale(1.05)}
+.time-display{font-size:13px;color:#666;margin-top:16px}
 </style>
 </head>
 <body>
@@ -100,6 +108,7 @@ tr:hover td{background:#fafafa}
   <div class="brand"><h2>🏢 EAS Manager</h2><p>Employee Attendance System</p></div>
   <nav>
     <div class="nav-item active" data-section="dashboard"><span class="icon">📊</span>Dashboard</div>
+    <div class="nav-item" data-section="checkin"><span class="icon">⏱</span>Check In / Out</div>
     <div class="nav-item" data-section="team"><span class="icon">👥</span>My Team</div>
     <div class="nav-item" data-section="attendance"><span class="icon">📅</span>Team Attendance</div>
     <div class="nav-item" data-section="leaves"><span class="icon">📋</span>Leave Requests</div>
@@ -127,6 +136,19 @@ tr:hover td{background:#fafafa}
         <div class="stat-card"><div class="val" id="statTeam">–</div><div class="lbl">Team Members</div></div>
         <div class="stat-card"><div class="val" id="statLeaves">–</div><div class="lbl">Pending Leaves</div></div>
         <div class="stat-card"><div class="val" id="statRecheckin">–</div><div class="lbl">Pending Re-checkins</div></div>
+      </div>
+    </div>
+
+    <!-- CHECKIN -->
+    <div class="section" id="sec-checkin">
+      <div class="checkin-card">
+        <h2>Check In / Check Out</h2>
+        <p class="status-text" id="checkinStatusText">Loading today's status…</p>
+        <button class="checkin-big-btn inactive" id="checkinBtn" onclick="handleCheckin()">
+          <span id="checkinBtnIcon">🟢</span>
+          <span id="checkinBtnLabel">CHECK IN</span>
+        </button>
+        <div class="time-display" id="checkinTimeDisplay"></div>
       </div>
     </div>
 
@@ -319,6 +341,7 @@ tr:hover td{background:#fafafa}
 <script src="/assets/js/core/ui.js"></script>
 <script>
 let team = [];
+let isCheckedIn = false;
 
 async function init() {
   const res = await fetch('/api/auth/me');
@@ -327,6 +350,7 @@ async function init() {
   if(me.role!=='MANAGER'&&me.role!=='ADMIN'){window.location.href='/login';return;}
   document.getElementById('sidebarName').textContent=me.firstName+' '+me.lastName;
   loadStats();
+  loadMyTodayStatus();
   populateMonthYear();
   loadNotifCount();
   setInterval(loadNotifCount,30000);
@@ -347,7 +371,8 @@ document.querySelectorAll('.nav-item').forEach(item=>{
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.getElementById('sec-'+sec)?.classList.add('active');
     document.getElementById('pageTitle').textContent=item.textContent.trim();
-    if(sec==='team')loadTeam();
+    if(sec==='checkin')loadMyTodayStatus();
+    else if(sec==='team')loadTeam();
     else if(sec==='leaves')loadLeaves();
     else if(sec==='recheckin')loadRecheckin();
     else if(sec==='tasks')loadTasks();
@@ -362,6 +387,53 @@ async function api(url,method='GET',body){
   if(body)opts.body=JSON.stringify(body);
   const res=await fetch(url,opts);
   return{ok:res.ok,status:res.status,data:await res.json().catch(()=>({}))};
+}
+
+// ── Manager check-in / check-out ────────────────────────────────
+async function loadMyTodayStatus(){
+  const r=await api('/api/manager/today-status');
+  if(!r.ok){
+    document.getElementById('checkinStatusText').textContent='Cannot load check-in status.';
+    return;
+  }
+  const d=r.data||{};
+  const btn=document.getElementById('checkinBtn');
+  const icon=document.getElementById('checkinBtnIcon');
+  const label=document.getElementById('checkinBtnLabel');
+  const statusText=document.getElementById('checkinStatusText');
+  const timeDisplay=document.getElementById('checkinTimeDisplay');
+
+  if(d.state==='CHECKED_IN'){
+    isCheckedIn=true;
+    btn.classList.remove('inactive');btn.classList.add('active');
+    icon.textContent='🔴';label.textContent='CHECK OUT';
+    statusText.textContent='You are currently checked in.';
+    timeDisplay.textContent='Checked in at '+fmtTime(d.checkInTime);
+  }else if(d.state==='CHECKED_OUT'){
+    isCheckedIn=false;
+    btn.classList.remove('active');btn.classList.add('inactive');
+    icon.textContent='✅';label.textContent='DONE TODAY';
+    statusText.textContent='You already checked out today.';
+    timeDisplay.textContent='Checked in at '+fmtTime(d.checkInTime)+' | Checked out at '+fmtTime(d.checkOutTime);
+  }else{
+    isCheckedIn=false;
+    btn.classList.remove('active');btn.classList.add('inactive');
+    icon.textContent='🟢';label.textContent='CHECK IN';
+    statusText.textContent='You have not checked in today.';
+    timeDisplay.textContent='';
+  }
+}
+
+async function handleCheckin(){
+  if(isCheckedIn){
+    const r=await api('/api/manager/checkout','POST');
+    if(r.ok){alert('Checked out at '+fmtTime(r.data.checkOutTime));loadMyTodayStatus();}
+    else alert(r.data.error||'Check-out failed');
+  } else {
+    const r=await api('/api/manager/checkin','POST');
+    if(r.ok){alert('Checked in at '+fmtTime(r.data.checkInTime));loadMyTodayStatus();}
+    else alert(r.data.error||'Check-in failed');
+  }
 }
 
 async function loadStats(){

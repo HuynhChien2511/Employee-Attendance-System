@@ -54,9 +54,11 @@
 package com.example.demo.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -115,6 +117,10 @@ public class ManagerApiController {
         return id == null ? null : userRepo.findById(id).orElse(null);
     }
 
+    private ResponseEntity<?> noEmployee() {
+        return ResponseEntity.status(400).body(Map.of("error", "No employee record linked to this manager account"));
+    }
+
     // ─── TEAM ─────────────────────────────────────────────────────
 
     @GetMapping("/team")
@@ -125,6 +131,78 @@ public class ManagerApiController {
     }
 
     // ─── ATTENDANCE ───────────────────────────────────────────────
+
+    @PostMapping("/checkin")
+    public ResponseEntity<?> checkIn(HttpSession session) {
+        if (!isManager(session)) return forbidden();
+        User user = currentUser(session);
+        if (user == null || user.getEmployee() == null) return noEmployee();
+        Employee emp = user.getEmployee();
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
+        List<com.example.demo.entity.AttendanceRecord> todayRecords = attendanceRepo
+                .findByEmployee_IdAndCheckInTimeBetweenOrderByCheckInTimeDesc(emp.getId(), todayStart, todayEnd);
+        if (!todayRecords.isEmpty() && todayRecords.get(0).getCheckOutTime() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Already checked in. Please check out first."));
+        }
+
+        com.example.demo.entity.AttendanceRecord record = new com.example.demo.entity.AttendanceRecord();
+        record.setEmployee(emp);
+        record.setCheckInTime(now);
+        if (now.getHour() >= 9) {
+            record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.LATE);
+        } else {
+            record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.PRESENT);
+        }
+        return ResponseEntity.ok(attendanceRepo.save(record));
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkOut(HttpSession session) {
+        if (!isManager(session)) return forbidden();
+        User user = currentUser(session);
+        if (user == null || user.getEmployee() == null) return noEmployee();
+        Employee emp = user.getEmployee();
+
+        return attendanceRepo
+                .findTopByEmployee_IdAndCheckOutTimeIsNullOrderByCheckInTimeDesc(emp.getId())
+                .<ResponseEntity<?>>map(record -> {
+                    record.setCheckOutTime(LocalDateTime.now());
+                    record.calculateHoursWorked();
+                    if (record.getHoursWorked() != null && record.getHoursWorked() < 4.0) {
+                        record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.HALF_DAY);
+                    }
+                    return ResponseEntity.ok(attendanceRepo.save(record));
+                })
+                .orElse(ResponseEntity.badRequest().body(Map.of("error", "No active check-in found.")));
+    }
+
+    @GetMapping("/today-status")
+    public ResponseEntity<?> todayStatus(HttpSession session) {
+        if (!isManager(session)) return forbidden();
+        User user = currentUser(session);
+        if (user == null || user.getEmployee() == null) return noEmployee();
+        Employee emp = user.getEmployee();
+
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
+        List<com.example.demo.entity.AttendanceRecord> todayRecords = attendanceRepo
+                .findByEmployee_IdAndCheckInTimeBetweenOrderByCheckInTimeDesc(emp.getId(), todayStart, todayEnd);
+
+        Map<String, Object> status = new HashMap<>();
+        if (todayRecords.isEmpty()) {
+            status.put("state", "NOT_CHECKED_IN");
+        } else {
+            com.example.demo.entity.AttendanceRecord latest = todayRecords.get(0);
+            status.put("state", latest.getCheckOutTime() == null ? "CHECKED_IN" : "CHECKED_OUT");
+            status.put("checkInTime", latest.getCheckInTime());
+            status.put("checkOutTime", latest.getCheckOutTime());
+            status.put("recordId", latest.getId());
+        }
+        return ResponseEntity.ok(status);
+    }
 
     @GetMapping("/attendance/{employeeId}")
     public ResponseEntity<?> getAttendance(@PathVariable Long employeeId,
