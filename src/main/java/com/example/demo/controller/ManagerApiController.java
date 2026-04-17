@@ -130,6 +130,64 @@ public class ManagerApiController {
         return ResponseEntity.ok(employeeRepo.findByManagerUserId(userId));
     }
 
+    // ─── PROFILE ──────────────────────────────────────────────────
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(HttpSession session) {
+        if (!isManager(session)) return forbidden();
+        User user = currentUser(session);
+        if (user == null || user.getEmployee() == null) return noEmployee();
+        Employee emp = user.getEmployee();
+
+        Map<String, Object> profile = new HashMap<>();
+        profile.put("firstName", emp.getFirstName());
+        profile.put("lastName", emp.getLastName());
+        profile.put("role", user.getRole().toString());
+        profile.put("department", emp.getDepartment());
+        profile.put("position", emp.getPosition());
+        profile.put("baseSalary", emp.getBaseSalary());
+
+        // Today's status
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
+        List<com.example.demo.entity.AttendanceRecord> todayRecords = attendanceRepo
+                .findByEmployee_IdAndCheckInTimeBetweenOrderByCheckInTimeDesc(emp.getId(), todayStart, todayEnd);
+        
+        String todayStatus = "NOT_CHECKED_IN";
+        LocalDateTime checkInTime = null;
+        LocalDateTime checkOutTime = null;
+        if (!todayRecords.isEmpty()) {
+            com.example.demo.entity.AttendanceRecord latest = todayRecords.get(0);
+            todayStatus = latest.getCheckOutTime() == null ? "CHECKED_IN" : "CHECKED_OUT";
+            checkInTime = latest.getCheckInTime();
+            checkOutTime = latest.getCheckOutTime();
+        }
+        profile.put("todayStatus", todayStatus);
+        profile.put("checkInTime", checkInTime);
+        profile.put("checkOutTime", checkOutTime);
+
+        // Monthly bonus/penalty (current month)
+        LocalDate now = LocalDate.now();
+        BigDecimal monthlyBonus = bonusPenaltyService.sumBonus(emp.getId(), now.getMonthValue(), now.getYear());
+        BigDecimal monthlyPenalty = bonusPenaltyService.sumPenalty(emp.getId(), now.getMonthValue(), now.getYear());
+        profile.put("monthlyBonus", monthlyBonus);
+        profile.put("monthlyPenalty", monthlyPenalty);
+
+        // Salary coefficient (relative to base salary, default 1.0)
+        profile.put("salaryCoefficient", 1.0);
+
+        // Working days this month
+        try {
+            Map<String, Object> monthlySummary = monthlySummaryService.compute(emp.getId(), now.getMonthValue(), now.getYear());
+            Integer presentDays = (Integer) monthlySummary.getOrDefault("presentDays", 0);
+            profile.put("workingDaysThisMonth", presentDays);
+        } catch (Exception e) {
+            profile.put("workingDaysThisMonth", 0);
+        }
+
+        return ResponseEntity.ok(profile);
+    }
+
     // ─── ATTENDANCE ───────────────────────────────────────────────
 
     @PostMapping("/checkin")
