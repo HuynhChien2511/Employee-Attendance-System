@@ -1,16 +1,16 @@
 USE employee_attendance;
 
-INSERT INTO employees (id, first_name, last_name, email, employee_id, phone, department, position, hire_date, status, base_salary) VALUES
-(1, 'John', 'Doe', 'john.doe@company.com', 'EMP001', '555-0101', 'Engineering', 'Software Engineer', '2023-01-15', 'ACTIVE', 15000000),
-(2, 'Jane', 'Smith', 'jane.smith@company.com', 'EMP002', '555-0102', 'Human Resources', 'HR Manager', '2022-06-01', 'ACTIVE', 22000000),
-(3, 'Mike', 'Johnson', 'mike.johnson@company.com', 'EMP003', '555-0103', 'Sales', 'Sales Executive', '2023-03-20', 'ACTIVE', 14000000),
-(4, 'Emily', 'Brown', 'emily.brown@company.com', 'EMP004', '555-0104', 'Finance', 'Accountant', '2021-11-10', 'ACTIVE', 18000000),
-(5, 'David', 'Wilson', 'david.wilson@company.com', 'EMP005', '555-0105', 'Engineering', 'Backend Developer', '2024-02-12', 'ACTIVE', 16500000),
-(6, 'Sophia', 'Taylor', 'sophia.taylor@company.com', 'EMP006', '555-0106', 'Marketing', 'Marketing Specialist', '2020-08-18', 'ON_LEAVE', 15500000),
-(7, 'James', 'Anderson', 'james.anderson@company.com', 'EMP007', '555-0107', 'Operations', 'Operations Lead', '2019-05-05', 'ACTIVE', 21000000),
-(8, 'Olivia', 'Thomas', 'olivia.thomas@company.com', 'EMP008', '555-0108', 'Engineering', 'QA Engineer', '2024-01-08', 'ACTIVE', 13500000),
-(9, 'Liam', 'Martinez', 'liam.martinez@company.com', 'EMP009', '555-0109', 'Support', 'Support Agent', '2023-09-14', 'INACTIVE', 12000000),
-(10, 'Ava', 'Garcia', 'ava.garcia@company.com', 'EMP010', '555-0110', 'Product', 'Product Owner', '2022-12-01', 'ACTIVE', 25000000);
+INSERT INTO employees (id, first_name, last_name, email, employee_id, phone, department, position, hire_date, status, manager_user_id, base_salary) VALUES
+(1, 'John', 'Doe', 'john.doe@company.com', 'EMP001', '555-0101', 'Engineering', 'Software Engineer', '2023-01-15', 'ACTIVE', 2, 15000000),
+(2, 'Jane', 'Smith', 'jane.smith@company.com', 'EMP002', '555-0102', 'Human Resources', 'HR Manager', '2022-06-01', 'ACTIVE', NULL, 22000000),
+(3, 'Mike', 'Johnson', 'mike.johnson@company.com', 'EMP003', '555-0103', 'Sales', 'Sales Executive', '2023-03-20', 'ACTIVE', 8, 14000000),
+(4, 'Emily', 'Brown', 'emily.brown@company.com', 'EMP004', '555-0104', 'Finance', 'Accountant', '2021-11-10', 'ACTIVE', 2, 18000000),
+(5, 'David', 'Wilson', 'david.wilson@company.com', 'EMP005', '555-0105', 'Engineering', 'Backend Developer', '2024-02-12', 'ACTIVE', 2, 16500000),
+(6, 'Sophia', 'Taylor', 'sophia.taylor@company.com', 'EMP006', '555-0106', 'Marketing', 'Marketing Specialist', '2020-08-18', 'ON_LEAVE', 8, 15500000),
+(7, 'James', 'Anderson', 'james.anderson@company.com', 'EMP007', '555-0107', 'Operations', 'Operations Lead', '2019-05-05', 'ACTIVE', NULL, 21000000),
+(8, 'Olivia', 'Thomas', 'olivia.thomas@company.com', 'EMP008', '555-0108', 'Engineering', 'QA Engineer', '2024-01-08', 'ACTIVE', 2, 13500000),
+(9, 'Liam', 'Martinez', 'liam.martinez@company.com', 'EMP009', '555-0109', 'Support', 'Support Agent', '2023-09-14', 'INACTIVE', 8, 12000000),
+(10, 'Ava', 'Garcia', 'ava.garcia@company.com', 'EMP010', '555-0110', 'Product', 'Product Owner', '2022-12-01', 'ACTIVE', 8, 25000000);
 
 INSERT INTO shifts (id, shift_name, start_time, end_time, description, is_active) VALUES
 (1, 'Morning Shift A', '08:00:00', '16:00:00', 'Standard morning shift', 1),
@@ -82,3 +82,18 @@ INSERT INTO bonus_penalty (id, employee_id, type, amount, reason, effective_date
 (1, 1, 'BONUS', 2000000.00, 'Outstanding April delivery', '2026-04-01', 4, 2026, 1, '2026-04-02 09:00:00'),
 (2, 2, 'PENALTY', 500000.00, 'Late monthly report', '2026-04-01', 4, 2026, 1, '2026-04-02 09:15:00'),
 (3, 3, 'BONUS', 1000000.00, 'Sales target met', '2026-04-01', 4, 2026, 1, '2026-04-05 10:00:00');
+
+INSERT INTO tasks (id, title, description, deadline, status, created_by_user_id, created_at, attached_file_name, attached_file_path) VALUES
+(1, 'Prepare Weekly Attendance Report', 'Compile attendance anomalies and submit summary to HR.', '2026-04-20', 'IN_PROCESS', 2, '2026-04-15 09:00:00', NULL, NULL),
+(2, 'Update Team Handover Notes', 'Finalize Q2 handover notes and upload to shared drive.', '2026-04-12', 'FINISHED', 8, '2026-04-10 10:30:00', NULL, NULL);
+
+INSERT INTO task_members (id, task_id, employee_id) VALUES
+(1, 1, 1),
+(2, 1, 5),
+(3, 1, 8),
+(4, 2, 3),
+(5, 2, 6),
+(6, 2, 10);
+
+INSERT INTO task_submissions (id, task_id, employee_id, text_content, file_name, file_path, submitted_at) VALUES
+(1, 2, 3, 'Completed handover draft and shared with manager.', NULL, NULL, '2026-04-11 16:45:00');

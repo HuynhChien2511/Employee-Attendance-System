@@ -1,6 +1,6 @@
 # Employee Attendance System
 
-A full-stack **Employee Attendance Management System** built with Spring Boot and MySQL. The system supports three distinct roles — **Admin**, **Manager**, and **Employee** — each with a dedicated dashboard and feature set.
+A full-stack **Employee Attendance Management System** built with Spring Boot and MySQL. The system supports three distinct roles ï¿½ **Admin**, **Manager**, and **Employee** ï¿½ each with a dedicated dashboard and feature set.
 
 ---
 
@@ -64,11 +64,11 @@ A full-stack **Employee Attendance Management System** built with Spring Boot an
 ```
 src/main/
 +-- java/com/example/demo/
-¦   +-- config/          # Auth interceptor, WebMvc config, Data initializer
-¦   +-- controller/      # REST & MVC controllers for all roles
-¦   +-- entity/          # JPA entities (User, Employee, Shift, Task, etc.)
-¦   +-- repository/      # Spring Data JPA repositories
-¦   +-- service/         # Business logic layer
+ï¿½   +-- config/          # Auth interceptor, WebMvc config, Data initializer
+ï¿½   +-- controller/      # REST & MVC controllers for all roles
+ï¿½   +-- entity/          # JPA entities (User, Employee, Shift, Task, etc.)
+ï¿½   +-- repository/      # Spring Data JPA repositories
+ï¿½   +-- service/         # Business logic layer
 +-- resources/
     +-- application.properties
     +-- schema.sql
@@ -119,6 +119,14 @@ Or directly edit `src/main/resources/application.properties`:
 spring.datasource.username=root
 spring.datasource.password=yourpassword
 ```
+
+### Important update for existing local databases
+
+If you pulled the latest task-management changes on an existing database, run this SQL patch once:
+
+`src/main/resources/dev-data-patch-2026-04-17.sql`
+
+This patch adds/aligns task-related tables and manager-team mapping data required by the new Task UI and APIs.
 
 ### 3. Run the application
 

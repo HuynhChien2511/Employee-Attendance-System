@@ -121,6 +121,7 @@ tr:hover td{background:#fafafa}
     <div class="nav-item" data-section="users"><span class="icon">🔑</span>User Accounts</div>
     <div class="nav-item" data-section="attendance"><span class="icon">📅</span>Attendance View</div>
     <div class="nav-item" data-section="summary"><span class="icon">📈</span>Monthly Summary</div>
+    <div class="nav-item" data-section="tasks"><span class="icon">📌</span>Task Management</div>
     <div class="nav-item" data-section="bonus"><span class="icon">💰</span>Bonus / Penalty</div>
     <div class="nav-item" data-section="leaves"><span class="icon">📋</span>Leave Requests</div>
     <div class="nav-item" data-section="announcements"><span class="icon">📢</span>Announcements</div>
@@ -188,6 +189,14 @@ tr:hover td{background:#fafafa}
       <div id="summaryCard" style="display:none" class="card">
         <div class="card-header"><h3>Monthly Summary</h3></div>
         <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="summaryGrid"></div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="section" id="sec-tasks">
+      <div class="card">
+        <div class="card-header"><h3>All Tasks</h3><button class="btn btn-primary" onclick="openTaskModal()">+ Create Task</button></div>
+        <table><thead><tr><th>ID</th><th>Title</th><th>Members</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead><tbody id="taskBody"></tbody></table>
       </div>
     </div>
 
@@ -327,6 +336,45 @@ tr:hover td{background:#fafafa}
   </div>
 </div>
 
+<!-- Add Task -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <h3>Create Task</h3>
+    <div class="form-group"><label>Title *</label><input class="form-control" id="tf_title"></div>
+    <div class="form-group"><label>Description</label><textarea class="form-control" id="tf_desc" rows="3" style="resize:vertical"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Deadline *</label><input class="form-control" id="tf_deadline" type="date"></div>
+      <div class="form-group"><label>Attach File</label><input class="form-control" id="tf_file" type="file"></div>
+    </div>
+    <div class="form-group"><label>Assign Members *</label><select class="form-control" id="tf_members" multiple size="8"></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('taskModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task Detail -->
+<div class="modal-overlay" id="taskDetailModal">
+  <div class="modal" style="width:620px;max-width:96vw">
+    <h3 id="taskDetailTitle">Task Detail</h3>
+    <div id="taskDetailMeta" style="font-size:12px;color:#888;margin-bottom:8px"></div>
+    <div id="taskDetailDesc" style="font-size:13px;color:#444;margin-bottom:14px;white-space:pre-wrap"></div>
+    <div id="taskDetailAttach" style="margin-bottom:12px"></div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Members</div>
+      <div id="taskDetailMembers" style="font-size:13px;color:#333"></div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Submissions</div>
+      <div id="taskDetailSubs" style="max-height:180px;overflow:auto"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('taskDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Reply Suggestion -->
 <div class="modal-overlay" id="replyModal">
   <div class="modal">
@@ -385,6 +433,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
     currentSection = sec;
     if (sec==='employees') loadEmployees();
     else if (sec==='users') loadUsers();
+    else if (sec==='tasks') loadTasks();
     else if (sec==='bonus') loadBonus();
     else if (sec==='leaves') loadLeaves();
     else if (sec==='announcements') loadAnnouncements();
@@ -568,6 +617,72 @@ function populateEmpSelects() {
     const sel=document.getElementById(id);if(!sel)return;
     sel.innerHTML='<option value="">Select Employee…</option>'+employees.map(e=>`<option value="${e.id}">${e.firstName} ${e.lastName} (${e.employeeId})</option>`).join('');
   });
+  const tf=document.getElementById('tf_members');
+  if(tf) tf.innerHTML=employees.map(e=>`<option value="${e.id}">${e.firstName} ${e.lastName} (${e.employeeId})</option>`).join('');
+}
+
+// ── Tasks ────────────────────────────────────────────────────────
+async function loadTasks(){
+  const r=await api('/api/tasks');if(!r.ok)return;
+  document.getElementById('taskBody').innerHTML=r.data.map(t=>`
+    <tr>
+      <td>#${t.id}</td>
+      <td>${t.title||'–'}</td>
+      <td>${t.memberCount??0}</td>
+      <td><span class="badge badge-${taskStatusClass(t.status)}">${t.status||'–'}</span></td>
+      <td>${t.deadline||'–'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="openTaskDetail(${t.id})">Detail</button> ${t.status==='IN_PROCESS'?`<button class="btn btn-sm btn-success" onclick="finishTask(${t.id})">Finish</button>`:''}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">No tasks</td></tr>';
+}
+
+async function openTaskDetail(id){
+  const r=await api('/api/employee/tasks/'+id);
+  if(!r.ok){alert(r.data.error||'Failed to load task details');return;}
+  const t=r.data;
+  document.getElementById('taskDetailTitle').textContent='#'+t.id+' '+escHtml(t.title||'Task');
+  document.getElementById('taskDetailMeta').innerHTML=`Deadline: <strong>${t.deadline||'–'}</strong> &nbsp;|&nbsp; Status: <strong>${t.status||'–'}</strong> &nbsp;|&nbsp; Created by: <strong>${escHtml(t.createdBy||'–')}</strong>`;
+  document.getElementById('taskDetailDesc').textContent=t.description||'No description.';
+  document.getElementById('taskDetailAttach').innerHTML=t.attachedFileName
+    ?`<a href="/api/files/download?path=${encodeURIComponent(t.attachedFilePath)}" style="font-size:13px;color:#0f766e">📎 ${escHtml(t.attachedFileName)}</a>`
+    :'';
+  document.getElementById('taskDetailMembers').innerHTML=(t.members||[]).map(m=>`<span style="background:#f1f5f9;border-radius:6px;padding:3px 10px;margin:2px;display:inline-block;font-size:13px">${escHtml(m.employeeName||'–')}</span>`).join('')||'–';
+  document.getElementById('taskDetailSubs').innerHTML=(t.submissions||[]).length
+    ?t.submissions.map(s=>`<div style="background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px"><div style="font-size:11px;color:#888;margin-bottom:4px">${escHtml(s.employeeName||'–')} · ${fmtDate(s.submittedAt)}</div><div>${escHtml(s.textContent||'')}</div>${s.fileName?`<a href="/api/files/download?path=${encodeURIComponent(s.filePath)}" style="font-size:12px;color:#0f766e">📎 ${escHtml(s.fileName)}</a>`:''}</div>`).join('')
+    :'<p style="font-size:13px;color:#999">No submissions yet</p>';
+  openModal('taskDetailModal');
+}
+
+async function openTaskModal(){
+  if(!employees.length){const r=await api('/api/admin/employees');if(r.ok){employees=r.data;populateEmpSelects();}}
+  document.getElementById('tf_title').value='';
+  document.getElementById('tf_desc').value='';
+  document.getElementById('tf_deadline').value='';
+  document.getElementById('tf_file').value='';
+  openModal('taskModal');
+}
+
+async function saveTask(){
+  const title=document.getElementById('tf_title').value.trim();
+  const deadline=document.getElementById('tf_deadline').value;
+  const members=Array.from(document.getElementById('tf_members').selectedOptions).map(o=>o.value);
+  if(!title||!deadline||members.length===0){alert('Title, deadline and members are required');return;}
+
+  const fd=new FormData();
+  fd.append('title',title);
+  fd.append('description',document.getElementById('tf_desc').value||'');
+  fd.append('deadline',deadline);
+  members.forEach(m=>fd.append('memberIds',m));
+  const file=document.getElementById('tf_file').files[0];
+  if(file) fd.append('file',file);
+
+  const res=await fetch('/api/tasks',{method:'POST',body:fd});
+  if(res.ok){closeModal('taskModal');loadTasks();}
+  else {const d=await res.json().catch(()=>({}));alert(d.error||'Failed to create task');}
+}
+
+async function finishTask(id){
+  const r=await api(`/api/tasks/${id}/finish`,'PUT');
+  if(r.ok) loadTasks();
 }
 
 // ── Monthly Summary ───────────────────────────────────────────────
@@ -694,7 +809,9 @@ function fmt(n){if(n==null)return '–';return Number(n).toLocaleString('vi-VN')
 function fmtDate(dt){if(!dt)return '–';return new Date(dt).toLocaleDateString('en-CA');}
 function fmtTime(dt){if(!dt)return '–';return new Date(dt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
 function statusClass(s){const m={PRESENT:'active',APPROVED:'active',LATE:'pending',ABSENT:'inactive',ON_LEAVE:'inactive',REJECTED:'inactive',PENDING:'pending',HALF_DAY:'pending'};return m[s]||'inactive';}
+function taskStatusClass(s){const m={IN_PROCESS:'pending',FINISHED:'active',MISSED_DEADLINE:'inactive'};return m[s]||'inactive';}
 function esc(s){return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function escHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 

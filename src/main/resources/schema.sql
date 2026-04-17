@@ -2,6 +2,9 @@ CREATE DATABASE IF NOT EXISTS employee_attendance;
 USE employee_attendance;
 
 DROP TABLE IF EXISTS bonus_penalty;
+DROP TABLE IF EXISTS task_submissions;
+DROP TABLE IF EXISTS task_members;
+DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS leave_requests;
 DROP TABLE IF EXISTS shift_assignments;
@@ -20,6 +23,7 @@ CREATE TABLE employees (
     position VARCHAR(100),
     hire_date DATE,
     status VARCHAR(30),
+    manager_user_id BIGINT,
     base_salary DECIMAL(15,2) NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uk_employees_email (email),
@@ -90,6 +94,47 @@ CREATE TABLE users (
     UNIQUE KEY uk_users_employee_id (employee_id),
     CONSTRAINT chk_users_password_len CHECK (CHAR_LENGTH(password) >= 8),
     CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE tasks (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    deadline DATE,
+    status VARCHAR(30) NOT NULL,
+    created_by_user_id BIGINT,
+    created_at DATETIME(6),
+    attached_file_name VARCHAR(255),
+    attached_file_path VARCHAR(255),
+    PRIMARY KEY (id),
+    KEY idx_tasks_created_by (created_by_user_id),
+    CONSTRAINT fk_tasks_created_by FOREIGN KEY (created_by_user_id) REFERENCES users (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE task_members (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    task_id BIGINT NOT NULL,
+    employee_id BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_task_members_task (task_id),
+    KEY idx_task_members_employee (employee_id),
+    CONSTRAINT fk_task_members_task FOREIGN KEY (task_id) REFERENCES tasks (id),
+    CONSTRAINT fk_task_members_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE task_submissions (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    task_id BIGINT NOT NULL,
+    employee_id BIGINT NOT NULL,
+    text_content TEXT,
+    file_name VARCHAR(255),
+    file_path VARCHAR(255),
+    submitted_at DATETIME(6),
+    PRIMARY KEY (id),
+    KEY idx_task_submissions_task (task_id),
+    KEY idx_task_submissions_employee (employee_id),
+    CONSTRAINT fk_task_submissions_task FOREIGN KEY (task_id) REFERENCES tasks (id),
+    CONSTRAINT fk_task_submissions_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE bonus_penalty (
