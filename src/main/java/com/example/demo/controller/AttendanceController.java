@@ -88,9 +88,3 @@ public class AttendanceController {
         return attendanceService.saveAttendance(record);
     }
 }
-
-    @PostMapping
-    public AttendanceRecord createAttendance(@RequestBody AttendanceRecord record) {
-        return attendanceService.saveAttendance(record);
-    }
-}
