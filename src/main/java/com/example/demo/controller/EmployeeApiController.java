@@ -382,9 +382,11 @@ public class EmployeeApiController {
         Employee emp = currentEmployee(session);
         if (emp == null) return noEmployee();
         LocalDate requestedDate = LocalDate.parse((String) body.get("requestedDate"));
-        LocalDateTime requestedTime = LocalDateTime.parse((String) body.get("requestedCheckinTime"));
+        // Parse requestedCheckinTime as LocalTime (HH:mm format) then combine with date
+        java.time.LocalTime requestedTime = java.time.LocalTime.parse((String) body.get("requestedCheckinTime"));
+        LocalDateTime requestedDateTime = LocalDateTime.of(requestedDate, requestedTime);
         String reason = (String) body.getOrDefault("reason", "");
-        return ResponseEntity.ok(reCheckinService.submit(emp, requestedDate, requestedTime, reason));
+        return ResponseEntity.ok(reCheckinService.submit(emp, requestedDate, requestedDateTime, reason));
     }
 
     // ─── NOTIFICATIONS ────────────────────────────────────────────
