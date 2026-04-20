@@ -10,6 +10,7 @@ A full-stack **Employee Attendance Management System** built with Spring Boot an
 - Admin creates and manages employee accounts
 - Role-based login with separate dashboards per role
 - Session-based authentication with route interceptors
+- Forgot-password and reset-password flow with email delivery
 
 ### Attendance
 - Employee **Check-in / Check-out** with timestamped records
@@ -122,11 +123,18 @@ spring.datasource.password=yourpassword
 
 ### Important update for existing local databases
 
-If you pulled the latest task-management changes on an existing database, run this SQL patch once:
+Recent forgot-password updates require these columns in `users`:
 
-`src/main/resources/dev-data-patch-2026-04-17.sql`
+- `reset_password_token` (VARCHAR)
+- `reset_password_expires_at` (DATETIME)
 
-This patch adds/aligns task-related tables and manager-team mapping data required by the new Task UI and APIs.
+With current config (`spring.jpa.hibernate.ddl-auto=update`), the app usually updates schema automatically at startup.
+
+If your local DB does not auto-update, add the two columns manually before testing forgot-password.
+
+Detailed setup and verification steps are documented in:
+
+- `forgot_password_update.md`
 
 ### 3. Run the application
 
@@ -146,7 +154,7 @@ On startup, the `DataInitializer` seeds a default **admin** account. Use those c
 
 | Controller             | Path Prefix       | Description                        |
 | ---------------------- | ----------------- | ---------------------------------- |
-| `AuthController`       | `/auth`           | Login / logout                     |
+| `AuthController`       | `/api/auth`       | Login / logout + forgot/reset pass |
 | `AdminApiController`   | `/api/admin`      | Admin management actions           |
 | `ManagerApiController` | `/api/manager`    | Manager-scoped actions             |
 | `EmployeeApiController`| `/api/employee`   | Employee self-service              |
@@ -164,6 +172,19 @@ On startup, the `DataInitializer` seeds a default **admin** account. Use those c
 | ------------- | ------- | --------------- |
 | `DB_USERNAME` | `root`  | MySQL username  |
 | `DB_PASSWORD` | `1234`  | MySQL password  |
+
+For forgot-password email testing (Mailtrap), also configure:
+
+| Variable              | Default                    | Description                                 |
+| --------------------- | -------------------------- | ------------------------------------------- |
+| `MAIL_HOST`           | `sandbox.smtp.mailtrap.io`| SMTP host                                   |
+| `MAIL_PORT`           | `587`                      | SMTP port                                   |
+| `MAIL_USERNAME`       | _(empty)_                  | Mailtrap SMTP username                      |
+| `MAIL_PASSWORD`       | _(empty)_                  | Mailtrap SMTP password                      |
+| `RESET_MAIL_FROM`     | `no-reply@eas.local`       | Sender address for reset password email     |
+| `APP_PUBLIC_BASE_URL` | `http://localhost:8080`    | Base URL used to build reset-password links |
+
+See `forgot_password_update.md` for the full step-by-step runbook.
 
 ---
 

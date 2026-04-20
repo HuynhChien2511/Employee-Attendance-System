@@ -1,57 +1,118 @@
 # Forgot Password Update Guide
 
-This document explains how to set up and test the forgot-password flow that was just implemented.
+This runbook explains exactly how to set up, migrate database changes, and test the forgot-password feature end-to-end.
 
 ## Scope of This Update
 
-- Added forgot-password API endpoint: `POST /api/auth/forgot-password`
-- Added reset-password API endpoint: `POST /api/auth/reset-password`
-- Added reset password page: `/reset-password?token=...`
-- Added token storage + expiry fields on user table
+- Added forgot-password endpoint: POST /api/auth/forgot-password
+- Added reset-password endpoint: POST /api/auth/reset-password
+- Added reset page: /reset-password?token=...
+- Added reset token fields in users table
 - Added SMTP sending through Spring Mail
 - Added rate limiting on forgot/reset endpoints
-- Updated login page to call real forgot-password API
+- Updated login UI to call the real forgot-password API
 
 ## Prerequisites
 
 - Java 21
-- Maven Wrapper (`mvnw` already in repo)
 - MySQL running locally
-- A Mailtrap SMTP inbox (for demo/testing emails)
+- Maven Wrapper in repo
+- A Mailtrap account
 
-## 1. Configure Environment Variables (PowerShell)
+## 1) Mailtrap Setup (Required)
 
-Run these commands in the same terminal that will start the app:
+Follow these steps per teammate.
+
+1. Create/sign in account at https://mailtrap.io
+2. Open Email Testing (Email Sandboxes)
+3. Create or open a Sandbox
+4. In the Sandbox, open Integration tab
+5. Select SMTP
+6. Copy these values:
+	 - Host (example: sandbox.smtp.mailtrap.io)
+	 - Port (recommended: 587)
+	 - Username
+	 - Password
+
+Important:
+
+- Use credentials from the same Sandbox where you expect messages.
+- If credentials are regenerated in Mailtrap, update local env vars.
+
+## 2) Database Schema Changes (Required)
+
+The users table now needs these fields:
+
+- reset_password_token VARCHAR(120)
+- reset_password_expires_at DATETIME(6)
+
+### Option A - Automatic update (current project default)
+
+Current app config uses spring.jpa.hibernate.ddl-auto=update, so starting the app will usually add missing columns automatically.
+
+### Option B - Manual SQL update (safe fallback)
+
+Run this SQL on your local database if columns are missing:
+
+```sql
+ALTER TABLE users
+	ADD COLUMN IF NOT EXISTS reset_password_token VARCHAR(120),
+	ADD COLUMN IF NOT EXISTS reset_password_expires_at DATETIME(6);
+
+CREATE INDEX idx_users_reset_password_token ON users (reset_password_token);
+```
+
+If your MySQL version does not support IF NOT EXISTS on ADD COLUMN, run separate checks first.
+
+### Verify schema
+
+```sql
+SHOW COLUMNS FROM users LIKE 'reset_password_token';
+SHOW COLUMNS FROM users LIKE 'reset_password_expires_at';
+```
+
+## 3) Configure Environment Variables (PowerShell)
+
+Run in the same terminal session that will start the app:
 
 ```powershell
 cd "D:\VS-code save\EAS\demo"
 
 $env:MAIL_HOST="sandbox.smtp.mailtrap.io"
 $env:MAIL_PORT="587"
-$env:MAIL_USERNAME="<YOUR_MAILTRAP_USERNAME>"
-$env:MAIL_PASSWORD="<YOUR_MAILTRAP_PASSWORD>"
+$env:MAIL_USERNAME="YOUR_MAILTRAP_USERNAME"
+$env:MAIL_PASSWORD="YOUR_MAILTRAP_PASSWORD"
 $env:RESET_MAIL_FROM="no-reply@eas.local"
 $env:APP_PUBLIC_BASE_URL="http://localhost:8080"
 
-# Optional DB overrides if your local DB differs from defaults
+# Optional DB overrides if needed
 # $env:DB_USERNAME="root"
 # $env:DB_PASSWORD="1234"
 ```
 
-Notes:
+Do not include angle brackets in real values.
 
-- Do not commit real credentials.
-- If credentials change, update env vars only. No code change needed.
-
-## 2. Start Application
+## 4) Start App
 
 ```powershell
 ./mvnw spring-boot:run
 ```
 
-When startup is successful, you should see Tomcat on port 8080.
+Expected startup signal: Tomcat started on port 8080.
 
-## 3. Test Login (Smoke Check)
+## 5) Verify test data exists
+
+Forgot-password only sends mail for an existing active user tied to an employee email.
+
+Recommended test email:
+
+- john.doe@company.com
+
+If your seed data differs, use a valid email from your own users table.
+
+## 6) Test Flow
+
+### 6.1 Smoke login
 
 ```powershell
 Invoke-WebRequest -Uri "http://localhost:8080/api/auth/login" `
@@ -62,7 +123,7 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/auth/login" `
 
 Expected: HTTP 200.
 
-## 4. Test Forgot Password
+### 6.2 Forgot password
 
 ```powershell
 Invoke-WebRequest -Uri "http://localhost:8080/api/auth/forgot-password" `
@@ -71,56 +132,64 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/auth/forgot-password" `
 	-Body '{"email":"john.doe@company.com"}'
 ```
 
-Expected: HTTP 200 and generic message:
+Expected: HTTP 200 with generic message.
 
-```json
-{"message":"If this email exists, a reset link will be sent."}
-```
+### 6.3 Check Mailtrap inbox
 
-Then check your Mailtrap inbox for the reset email.
+In Mailtrap, open the same Sandbox used in step 1 and refresh messages list.
 
-## 5. Test Reset Password
+Expected subject: Password reset request.
 
-1. Open Mailtrap email.
-2. Copy reset link (contains `token` query param).
-3. Open it in browser and submit new password.
+### 6.4 Reset password
 
-Or test API directly:
+Open email, copy reset link, then submit new password via browser.
+
+Or call API directly:
 
 ```powershell
 Invoke-WebRequest -Uri "http://localhost:8080/api/auth/reset-password" `
 	-Method Post `
 	-ContentType "application/json" `
-	-Body '{"token":"<TOKEN_FROM_EMAIL>","newPassword":"NewPass@123"}'
+	-Body '{"token":"TOKEN_FROM_EMAIL","newPassword":"NewPass@123"}'
 ```
 
-Expected: HTTP 200 with success message.
+Expected: HTTP 200.
 
-## 6. Security Behavior (Expected)
+## 7) Security Behavior (Expected)
 
-- Forgot-password response never leaks reset link/token in API response.
-- Token is one-time use.
-- Token expires (default: 15 minutes).
-- Rate limiting is enabled:
+- API never returns reset link/token in forgot-password response
+- Token is one-time use
+- Token expiry default is 15 minutes
+- Rate limit:
 	- Forgot password: 5 requests / 15 minutes per IP
 	- Reset password: 10 requests / 15 minutes per IP
 
-## 7. Common Issues
+## 8) Troubleshooting
 
-- `MailAuthenticationException`
-	- Verify Mailtrap host/port/username/password.
-	- Restart app in a new terminal after changing env vars.
+### Mail not visible in Mailtrap
 
-- `Port 8080 was already in use`
-	- Stop old Java process, then rerun app.
+1. Confirm app log contains: Password reset email queued for ...
+2. Confirm you are checking the correct Sandbox
+3. Confirm host/port/user/pass are from that same Sandbox
+4. Restart app after env changes (new terminal session)
 
-- No email appears in inbox
-	- Make sure app is running with Mailtrap vars in the same process.
-	- Check runtime logs for `Password reset email queued for ...`.
+### SMTP auth error
 
-## 8. Team Workflow Recommendation
+- Recopy Mailtrap Username/Password from Integration -> SMTP
+- Remove extra characters/spaces in env values
 
-- Keep all credentials in environment variables, never in git.
-- Each teammate can use personal Mailtrap inbox credentials.
-- Use this file as the single setup/test checklist.
+### Port 8080 in use
+
+```powershell
+$pid8080 = (Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue |
+	Where-Object { $_.State -eq 'Listen' } |
+	Select-Object -First 1 -ExpandProperty OwningProcess)
+if ($pid8080) { Stop-Process -Id $pid8080 -Force }
+```
+
+## 9) Team Rules
+
+- Never commit real SMTP credentials
+- Keep credentials in local env vars only
+- Use this file as the single onboarding and test checklist
 
