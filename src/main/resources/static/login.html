@@ -112,17 +112,41 @@ forgotLink.addEventListener('click', function(e) {
 closeModalBtn.addEventListener('click', function() {
   forgotModal.style.display = 'none';
 });
-sendResetBtn.addEventListener('click', function() {
-  // Demo: chỉ hiển thị thông báo, chưa gửi mail thật
+sendResetBtn.addEventListener('click', async function() {
   if (forgotEmail.value.trim() === '') {
     resetMsg.textContent = 'Please enter your email.';
     resetMsg.style.color = '#c62828';
     resetMsg.style.display = 'block';
     return;
   }
-  resetMsg.textContent = 'If this email exists, a reset link will be sent.';
-  resetMsg.style.color = '#0f766e';
-  resetMsg.style.display = 'block';
+
+  sendResetBtn.disabled = true;
+  sendResetBtn.textContent = 'Sending...';
+  try {
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: forgotEmail.value.trim() })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      resetMsg.textContent = data.error || 'Failed to send reset link.';
+      resetMsg.style.color = '#c62828';
+      resetMsg.style.display = 'block';
+      return;
+    }
+
+    resetMsg.style.color = '#0f766e';
+    resetMsg.textContent = data.message || 'If this email exists, a reset link will be sent.';
+    resetMsg.style.display = 'block';
+  } catch {
+    resetMsg.textContent = 'Server connection error. Please try again.';
+    resetMsg.style.color = '#c62828';
+    resetMsg.style.display = 'block';
+  } finally {
+    sendResetBtn.disabled = false;
+    sendResetBtn.textContent = 'Send Reset Link';
+  }
 });
 async function doLogin(e) {
   e.preventDefault();

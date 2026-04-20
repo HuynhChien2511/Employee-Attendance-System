@@ -19,6 +19,8 @@
  */
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -50,6 +52,14 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Column(name = "reset_password_token", length = 120)
+    @JsonIgnore
+    private String resetPasswordToken;
+
+    @Column(name = "reset_password_expires_at")
+    @JsonIgnore
+    private LocalDateTime resetPasswordExpiresAt;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

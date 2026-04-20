@@ -74,6 +74,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Announcement;
+import com.example.demo.entity.AttendanceRecord;
 import com.example.demo.entity.BonusPenalty;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.LeaveRequest;
@@ -142,19 +143,36 @@ public class ManagerApiController {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
-        List<com.example.demo.entity.AttendanceRecord> todayRecords = attendanceRepo
+        List<AttendanceRecord> todayRecords = attendanceRepo
                 .findByEmployee_IdAndCheckInTimeBetweenOrderByCheckInTimeDesc(emp.getId(), todayStart, todayEnd);
         if (!todayRecords.isEmpty() && todayRecords.get(0).getCheckOutTime() == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Already checked in. Please check out first."));
         }
 
-        com.example.demo.entity.AttendanceRecord record = new com.example.demo.entity.AttendanceRecord();
+        // Auto-checkout logic: Nếu đã check in trước đó 1 tiếng và bây giờ sau 18h
+        attendanceRepo.findTopByEmployee_IdAndCheckOutTimeIsNullOrderByCheckInTimeDesc(emp.getId())
+            .ifPresent(record -> {
+                LocalDateTime checkInTime = record.getCheckInTime();
+                LocalDateTime autoCheckoutTime = now.withHour(18).withMinute(0).withSecond(0).withNano(0);
+                if (checkInTime != null && now.isAfter(autoCheckoutTime)
+                    && java.time.Duration.between(checkInTime, autoCheckoutTime).toHours() >= 1
+                    && record.getCheckOutTime() == null) {
+                    record.setCheckOutTime(autoCheckoutTime);
+                    record.calculateHoursWorked();
+                    if (record.getHoursWorked() != null && record.getHoursWorked() < 4.0) {
+                        record.setStatus(AttendanceRecord.AttendanceStatus.HALF_DAY);
+                    }
+                    attendanceRepo.save(record);
+                }
+            });
+
+        AttendanceRecord record = new AttendanceRecord();
         record.setEmployee(emp);
         record.setCheckInTime(now);
         if (now.getHour() >= 9) {
-            record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.LATE);
+            record.setStatus(AttendanceRecord.AttendanceStatus.LATE);
         } else {
-            record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.PRESENT);
+            record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
         }
         return ResponseEntity.ok(attendanceRepo.save(record));
     }
@@ -172,7 +190,7 @@ public class ManagerApiController {
                     record.setCheckOutTime(LocalDateTime.now());
                     record.calculateHoursWorked();
                     if (record.getHoursWorked() != null && record.getHoursWorked() < 4.0) {
-                        record.setStatus(com.example.demo.entity.AttendanceRecord.AttendanceStatus.HALF_DAY);
+                        record.setStatus(AttendanceRecord.AttendanceStatus.HALF_DAY);
                     }
                     return ResponseEntity.ok(attendanceRepo.save(record));
                 })
@@ -188,14 +206,14 @@ public class ManagerApiController {
 
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         LocalDateTime todayEnd = LocalDate.now().atTime(23, 59, 59);
-        List<com.example.demo.entity.AttendanceRecord> todayRecords = attendanceRepo
+        List<AttendanceRecord> todayRecords = attendanceRepo
                 .findByEmployee_IdAndCheckInTimeBetweenOrderByCheckInTimeDesc(emp.getId(), todayStart, todayEnd);
 
         Map<String, Object> status = new HashMap<>();
         if (todayRecords.isEmpty()) {
             status.put("state", "NOT_CHECKED_IN");
         } else {
-            com.example.demo.entity.AttendanceRecord latest = todayRecords.get(0);
+            AttendanceRecord latest = todayRecords.get(0);
             status.put("state", latest.getCheckOutTime() == null ? "CHECKED_IN" : "CHECKED_OUT");
             status.put("checkInTime", latest.getCheckInTime());
             status.put("checkOutTime", latest.getCheckOutTime());

@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,7 +79,7 @@ public class AttendanceController {
     @PostMapping("/checkout/{employeeId}")
     public ResponseEntity<AttendanceRecord> checkOut(@PathVariable Long employeeId) {
         AttendanceRecord record = attendanceService.checkOutByEmployee(employeeId);
-        return record != null ? ResponseEntity.ok(record) : ResponseEntity.badRequest().body("No active check-in found for this employee.");
+        return record != null ? ResponseEntity.ok(record) : ResponseEntity.badRequest().build();
     }
     
     @PostMapping

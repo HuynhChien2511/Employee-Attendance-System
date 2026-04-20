@@ -58,6 +58,11 @@ public class WebController {
         return "forward:/login.html";
     }
 
+    @GetMapping("/reset-password")
+    public String resetPasswordPage() {
+        return "forward:/reset-password.html";
+    }
+
     @GetMapping("/admin")
     public String admin(HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";

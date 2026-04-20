@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "file.upload-dir",
+      "type": "java.lang.String",
+      "description": "Directory path for uploaded files."
+    },
+    {
+      "name": "app.public-base-url",
+      "type": "java.lang.String",
+      "description": "Public base URL used to build reset-password links."
+    },
+    {
+      "name": "app.security.reset-token-expiry-minutes",
+      "type": "java.lang.Integer",
+      "description": "Reset token expiry in minutes."
+    },
+    {
+      "name": "app.security.reset-password.mail-from",
+      "type": "java.lang.String",
+      "description": "Sender email address for password reset emails."
+    }
+  ]
+}

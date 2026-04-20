@@ -86,6 +86,8 @@ CREATE TABLE users (
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    reset_password_token VARCHAR(120),
+    reset_password_expires_at DATETIME(6),
     role VARCHAR(30) NOT NULL,
     employee_id BIGINT,
     is_active TINYINT(1) NOT NULL DEFAULT 1,

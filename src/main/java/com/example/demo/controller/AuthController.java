@@ -35,7 +35,10 @@
 package com.example.demo.controller;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +52,19 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final long RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000L;
+    private static final int FORGOT_MAX_ATTEMPTS = 5;
+    private static final int RESET_MAX_ATTEMPTS = 10;
+
+    private final Map<String, Queue<Long>> forgotAttemptsByIp = new ConcurrentHashMap<>();
+    private final Map<String, Queue<Long>> resetAttemptsByIp = new ConcurrentHashMap<>();
 
     @Autowired
     private AuthService authService;
@@ -82,6 +93,45 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body,
+                                            HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        if (isRateLimited(forgotAttemptsByIp, ip, FORGOT_MAX_ATTEMPTS, RATE_LIMIT_WINDOW_MS)) {
+            return ResponseEntity.status(429).body(Map.of("error", "Too many requests. Please try again later."));
+        }
+
+        String email = body.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+        }
+
+        String appBaseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        authService.requestPasswordReset(email, appBaseUrl);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "If this email exists, a reset link will be sent.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body,
+                                           HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
+        if (isRateLimited(resetAttemptsByIp, ip, RESET_MAX_ATTEMPTS, RATE_LIMIT_WINDOW_MS)) {
+            return ResponseEntity.status(429).body(Map.of("error", "Too many requests. Please try again later."));
+        }
+
+        String token = body.get("token");
+        String newPassword = body.get("newPassword");
+        try {
+            authService.resetPassword(token, newPassword);
+            return ResponseEntity.ok(Map.of("message", "Password has been reset successfully"));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> me(HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
@@ -91,6 +141,24 @@ public class AuthController {
         return userRepository.findById(userId)
                 .<ResponseEntity<?>>map(user -> ResponseEntity.ok(buildUserInfo(user)))
                 .orElse(ResponseEntity.status(401).body(Map.of("error", "Session invalid")));
+    }
+
+    private boolean isRateLimited(Map<String, Queue<Long>> bucket,
+                                  String key,
+                                  int maxAttempts,
+                                  long windowMs) {
+        long now = System.currentTimeMillis();
+        Queue<Long> timestamps = bucket.computeIfAbsent(key, k -> new LinkedList<>());
+        synchronized (timestamps) {
+            while (!timestamps.isEmpty() && now - timestamps.peek() > windowMs) {
+                timestamps.poll();
+            }
+            if (timestamps.size() >= maxAttempts) {
+                return true;
+            }
+            timestamps.offer(now);
+            return false;
+        }
     }
 
     private Map<String, Object> buildUserInfo(User user) {
